@@ -119,5 +119,4 @@ You can navigate right to the Community Layouts. Experiment a bit and find the o
 
 <img src="./steam_controller_layout.jpg" alt="Community controller layouts.">
 
-
 Enjoy!
