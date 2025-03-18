@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Enjoying Gothic 1 in 2025 on a Steam Deck.</title>
+        <meta name="description" content="Dedusting an old classic.">
+        <link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Dr. Collederas">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap">
+        <style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* Defaults */
+:root {
+	--font-family: 'Merriweather', serif;
+	--font-family-monospace: 'Courier Prime', monospace;
+}
+
+:root {
+    --color-gray-20: #e0e0e0;
+    --color-gray-50: #C0C0C0;
+    --color-gray-90: #333333;
+    --background-color: #fff;
+    --text-color: #222222;
+	--text-color-warning: #fd9a83ec;
+    --text-color-link: #1e88e5;
+    --text-color-link-active: #1565c0;
+    --text-color-link-visited: #3b8ad9;
+    --syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #222222;
+        --text-color: #e0e0e0;
+        --text-color-link: #66ccff;
+        --text-color-link-active: #0099cc;
+        --text-color-link-visited: #66b2ff;
+        --color-gray-20: #3c3c3c;
+        --color-gray-50: #666666;
+        --color-gray-90: #888888;
+    }
+}
+
+
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	overflow-y: scroll;
+}
+body {
+	max-width: 40em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+/* Fluid images via https://www.zachleat.com/web/fluid-images/ */
+img{
+  max-width: 100%;
+}
+img[width][height] {
+  height: auto;
+}
+img[src$=".svg"] {
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+video,
+iframe {
+	width: 100%;
+	height: auto;
+}
+iframe {
+	aspect-ratio: 16/9;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+.links-nextprev > * {
+	flex-grow: 1;
+}
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1em;
+}
+.home-link {
+	flex-grow: 1;
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	gap: .5em 1em;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+.callout {
+	margin: 1.75rem 0;
+	padding: 1.25rem;
+	border-left: 0.35rem solid var(--text-color-link);
+	background-color: var(--color-gray-20);
+	border-radius: 0.25rem;
+	font-family: var(--font-family);
+	line-height: 1.6;
+  }
+  
+  .callout-title {
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+  }
+  
+  .callout.note {
+	border-color: var(--text-color-link);
+  }
+
+  .callout.warning {
+	border-color: var(--text-color-warning);
+  }</style>
+    </head>
+        <body><a href="#skip" class="visually-hidden">Skip to main content</a>
+        <header>
+            <a href="/" class="home-link">Dr. Collederas</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Archive</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header>
+        <main id="skip">
+            <heading-anchors>
+                
+<h1 id="enjoying-gothic-1-in-2025-on-a-steam-deck">Enjoying Gothic 1 in 2025 on a Steam Deck.</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2025-03-17">17 March 2025</time></li>
+	<li><a href="/tags/gaming/" class="post-tag">gaming</a></li>
+</ul>
+
+<p>I recently had a kid and this meant my regular work schedule got completely flipped around. As this happened, in between nappy changing and feeding and caring for my girlfriend's recovery, I found little pockets of time, of about 2/3 hours, emerging from my new schedule.</p>
+<p>That's when that Steam Deck, gifted by a dear friend and almost forgotten on a living room shelf, caught my eye.</p>
+<p>But what game to play? For some obscure reason, a perverse idea creeped in my mind: I would really like to recover an old title that I never had the pleasure to play: Gothic1. I played the second and the third games, but never that original one.</p>
+<p>Problem is, Gothic came out in 2001, way before Steam Deck was a thing, and -heck- way before console gaming was as mainstream as it is today. And Gothic was a PC only kind of deal. No controller. Just keyboard.</p>
+<p>&quot;Will I be able to make it work?&quot;, I thought. Turns out: yes. And better than I'd have hoped for. So I decided to share how.</p>
+<h2 id="how-to-run-gothic-1-on-a-steam-deck-with-full-gamepad-support">How to run Gothic 1 on a Steam Deck with full Gamepad Support</h2>
+<p>So, you want to enjoy this great classic while chilling on the couch. Great. This is entirely possible and I think you'll be pleased with the results; but, it will take a little bit of effort so get ready to get your hands dirty. Figuratively. We got to dig deep into the Deck's OS.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>90% of <strong>the</strong> information available here comes from various places on The Internet. I just collected all relevant bits here and gave them some structure, so praise to the original authors. Notably <a href="https://www.reddit.com/r/SteamDeck/comments/uxtomx/comment/ia92wm7/">this reddit comment</a> and <a href="https://steamcommunity.com/workshop/filedetails/discussion/2791606767/592891465952152936/">this steam workshop discussion</a>.</p>
+</div>
+<h2 id="setup-the-workshop">Setup the Workshop</h2>
+<p>In Steam set Gothic beta version to &quot;workshop&quot;. For this, navigate to the game settings (gear icon), Properties and scroll down to Beta and enable the workshop.</p>
+<picture><source type="image/avif" srcset="/blog/firstpost/FVGst0ZgJ4-1280.avif 1280w"><source type="image/webp" srcset="/blog/firstpost/FVGst0ZgJ4-1280.webp 1280w"><img loading="lazy" decoding="async" src="/blog/firstpost/FVGst0ZgJ4-1280.jpeg" alt="Steam Deck Beta screen where you can enable the workshop." width="1280" height="800"></picture>
+<h2 id="enable-mods">Enable Mods</h2>
+<p>Visit Gothic 1 workshop and subscribe to the following mods:</p>
+<ul>
+<li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2787491081">Union - patch for Gothic 1</a></li>
+<li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2793930041">zGamePad - complete gamepad support</a></li>
+<li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2786936496">Ninja</a></li>
+<li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2789245548">Gothic 1 Community Patch</a></li>
+<li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2791606767">DirectX 11 Renderer</a></li>
+<li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2813524957">Mss32.dll - Union Linux sound fix</a></li>
+</ul>
+<div class="callout warning"><div class="callout-title">Mod loading order matters!</div><p>The order in which these mods are loaded matters. You can let steam detect the ideal order using the option in the dropdown or order them yourself. You can see below the intended order.</p>
+</div>
+<picture><source type="image/avif" srcset="/blog/firstpost/AC5NhUt6Pi-1280.avif 1280w"><source type="image/webp" srcset="/blog/firstpost/AC5NhUt6Pi-1280.webp 1280w"><img loading="lazy" decoding="async" src="/blog/firstpost/AC5NhUt6Pi-1280.jpeg" alt="Recommended mod list." width="1280" height="800"></picture>
+<h2 id="setup-the-emulator">Setup The Emulator</h2>
+<p>This is an old Windows game and will need emulation. Steam comes preloaded with some Proton versions but in order to load all the mods above we need a custom version called ProtoUp-Qt.</p>
+<p>In order to install this you need to switch to the destkop mode. Press the STEAM button, go to &quot;Power&quot; and select &quot;Switch to Desktop&quot;.</p>
+<p>Now, from the Launcher select System-&gt;Terminal.</p>
+<pre class="language-bash" tabindex="0"><code class="language-bash">$ flatpak <span class="token function">install</span> net.davidotek.pupgui2
+$ flatpak <span class="token function">install</span> com.github.Matoking.protontricks</code></pre>
+<p>Now run the ProtonUp-Qt desktop app and install the latest Proton-GE version 8. Version 9 is the latest at the moment of writing and it has some issues where the game crashes on launch for some reason. If a new version has been released by the time you are reading this, maybe it is worth trying it.</p>
+<p>One last thing before exiting Desktop mode: Use Dolphin, the File Manager to navigate to &quot;~/.steam/steam/steamapps/common/Gothic/system&quot; and delete SteamPack.ini. We need this to allow the Union mod to generate its own replacement.</p>
+<p>Switch back to gaming mode and enable the downloaded ProtonGE version from the list (it will likely be at the bottom).</p>
+<picture><source type="image/avif" srcset="/blog/firstpost/ELlz_KIeEn-1280.avif 1280w"><source type="image/webp" srcset="/blog/firstpost/ELlz_KIeEn-1280.webp 1280w"><img loading="lazy" decoding="async" src="/blog/firstpost/ELlz_KIeEn-1280.jpeg" alt="Compatibility with Proton GE." width="1280" height="800"></picture>
+<p>Run the game. You should see the following screen:</p>
+<picture><source type="image/avif" srcset="/blog/firstpost/iJ4Nx4e9B9-1280.avif 1280w"><source type="image/webp" srcset="/blog/firstpost/iJ4Nx4e9B9-1280.webp 1280w"><img loading="lazy" decoding="async" src="/blog/firstpost/iJ4Nx4e9B9-1280.jpeg" alt="Gothic mod launcher." width="1280" height="800"></picture>
+<p>If you got here, congratulations, but now you have to quit the game. We are not done yet, this step was just to allow the game to generate some required Proton directories.</p>
+<h2 id="directx11-and-music-fixes">DirectX11 and Music Fixes</h2>
+<p>If you play the game now you will likely have no music and no DirectX11 support. Let's fix that.</p>
+<p>Switch back to desktop mode and launch the terminal again:</p>
+<pre class="language-bash" tabindex="0"><code class="language-bash">$ flatpak run com.github.Matoking.protontricks <span class="token number">65540</span> directmusic</code></pre>
+<p>One more thing to allow this mod to work: open &quot;~/.steam/steam/steamapps/compatdata/65540/pfx/user.reg&quot; file in text editor:
+In the section</p>
+<p><code>[Software\\Wine\\DllOverrides]</code></p>
+<p>add this line</p>
+<p><code>&quot;ddraw&quot;=&quot;native,builtin&quot;</code></p>
+<p>this enables the DirectX 11 renderer
+and delete</p>
+<p><code>&quot;*dsound&quot;=&quot;native&quot;</code></p>
+<p>this fixes some minor sound delay and crackling
+Save and close.</p>
+<h2 id="fix-gd3d11-crash">Fix GD3D11 crash</h2>
+<p>It is possible that this is all you need and the game should now run. But, there is a chance that instead you will be greeted by a GD3D11 crash on your next launch. If that is the case, no fret, there is a fix!</p>
+<p>Switch to Desktop mode and use Firefox to navigate to the <a href="https://github.com/kirides/GD3D11">GD3D11 Github page</a>.</p>
+<p>Download the <code>17.8-dev9</code> version (you can switch Tags from the dropdown at the top, next to the Branches and Tags indicator).</p>
+<p>Download and extract the contents somewhere. Copy/paste the files from github to the System folder. Note, that it will paste all the files from the GD3D11 folder in the System folder and not in the GD3D11 subfolder.</p>
+<p>You can find the Gothic System folder under <code>Steam\steamapps\common</code> and the AppID of Gothic (which you can see in the Steam URL when you navigate to your Gothic copy in the Library).</p>
+<p>Switch back to Game Mode and launch the game. Congratulations, you can now enjoy this old classic fully restored and with modern rendering features!</p>
+<h2 id="gamepad-support">Gamepad support</h2>
+<p>You will probably have to get used to the way Gothic handles interaction. It's quite old style (here an <a href="https://www.youtube.com/watch?v=n_vIs-kavqI">explanatory video</a> about it).</p>
+<p>But, there are ways to make this a bit more user-friendly by activating a community controller layout. You can -at any point- use the STEAM button while playing the game to reveal the game menu where you can access the Gamepad options.</p>
+<p>You can navigate right to the Community Layouts. Experiment a bit and find the one the works best for you.</p>
+<picture><source type="image/avif" srcset="/blog/firstpost/ES-NvrRiSx-1280.avif 1280w"><source type="image/webp" srcset="/blog/firstpost/ES-NvrRiSx-1280.webp 1280w"><img loading="lazy" decoding="async" src="/blog/firstpost/ES-NvrRiSx-1280.jpeg" alt="Community controller layouts." width="1280" height="800"></picture>
+<p>Enjoy!</p>
+
+
+            </heading-anchors>
+        </main>
+        <footer>
+            <p>
+                <em>Built with
+                    <a href="https://www.11ty.dev/">Eleventy v3.0.0</a>
+                </em>
+            </p>
+        </footer>
+        <!-- This page `/blog/firstpost/` was built on 2025-03-18T13:36:55.487Z -->
+        <script type="module" src="/dist/xbxy_EL6cU.js"></script>
+    </body>
+</html>
