@@ -10,6 +10,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '22'
+      - run: npm install
+      - run: npm install @11ty/eleventy
       - run: npx @11ty/eleventy
       - name: Deploy to production branch
         uses: peaceiris/actions-gh-pages@v3
