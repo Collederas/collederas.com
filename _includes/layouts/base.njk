@@ -9,13 +9,13 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap">
-		
-		{%- css %}{% include "public/css/index.css" %}{% endcss %}
+            {%- css %}{% include "public/css/index.css" %}{% endcss %}
         {#- Render the CSS bundle using inlined CSS (for the fastest site performance in production) #}
         <style>{% getBundle "css" %}</style>
         {#- Renders the CSS bundle using a separate file, if you can't set CSP directive style-src: 'unsafe-inline' #}
         {#- <link rel="stylesheet" href="{% getBundleFileUrl "css" %}"> #}
-        {#- Add the heading-anchors web component to the JavaScript bundle #}{%- js %}{% include "node_modules/@zachleat/heading-anchors/heading-anchors.js" %}
+        {#- Add the heading-anchors web component to the JavaScript bundle #}{%- js %}
+        {% include "node_modules/@zachleat/heading-anchors/heading-anchors.js" %}
     {% endjs %}
     </head>
         <body><a href="#skip" class="visually-hidden">Skip to main content</a>
@@ -46,5 +46,15 @@
         </footer>
         <!-- This page `{{ page.url }}` was built on {% currentBuildDate %} -->
         <script type="module" src="{% getBundleFileUrl "js" %}"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-M4V1XCD4EB');
+        </script>P
     </body>
 </html>
