@@ -20,27 +20,27 @@
 &lt;p&gt;But what game to play? For some obscure reason, a perverse idea crept into my mind: I really wanted to revisit an old title that I never had the pleasure of playing—Gothic 1. I played the second and third games but never the original.&lt;/p&gt;
 &lt;p&gt;The problem is, Gothic came out in 2001—way before the Steam Deck was a thing and, heck, way before console gaming was as mainstream as it is today. And Gothic was a PC-only kind of deal. No controller. Just keyboard.&lt;/p&gt;
 &lt;p&gt;&amp;quot;Will I be able to make it work?&amp;quot; I thought. Turns out: yes. And better than I&#39;d hoped for. So I decided to share how.&lt;/p&gt;
-&lt;h2 id=&quot;how-to-run-gothic-1-on-a-steam-deck-with-full-gamepad-support&quot;&gt;How to run Gothic 1 on a Steam Deck with full Gamepad Support&lt;/h2&gt;
+&lt;h2 id=&quot;how-to-run-gothic-1-on-a-steam-deck-with-full-gamepad-support&quot; tabindex=&quot;-1&quot;&gt;How to run Gothic 1 on a Steam Deck with full Gamepad Support &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#how-to-run-gothic-1-on-a-steam-deck-with-full-gamepad-support&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;So, you want to enjoy this great classic while chilling on the couch? Great. This is entirely possible, and I think you&#39;ll be pleased with the results. But it will take a little bit of effort, so get ready to get your hands dirty—figuratively. We’ve got to dig deep into the Deck&#39;s OS.&lt;/p&gt;
-&lt;div class=&quot;callout note&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Note&lt;/div&gt;&lt;p&gt;90% of &lt;strong&gt;the&lt;/strong&gt; information available here comes from various places on The Internet. I just collected all relevant bits here and gave them some structure, so praise to the original authors. Notably &lt;a href=&quot;https://www.reddit.com/r/SteamDeck/comments/uxtomx/comment/ia92wm7/&quot;&gt;this reddit comment&lt;/a&gt; and &lt;a href=&quot;https://steamcommunity.com/workshop/filedetails/discussion/2791606767/592891465952152936/&quot;&gt;this steam workshop discussion&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&quot;callout note&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Note&lt;/div&gt;&lt;p&gt;90% of &lt;strong&gt;the&lt;/strong&gt; information available here comes from various places on The Internet. I just collected all relevant bits here and gave them some structure, so praise to the original authors. Notably &lt;a href=&quot;https://www.reddit.com/r/SteamDeck/comments/uxtomx/comment/ia92wm7/&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;this reddit comment&lt;/a&gt; and &lt;a href=&quot;https://steamcommunity.com/workshop/filedetails/discussion/2791606767/592891465952152936/&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;this steam workshop discussion&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;h2 id=&quot;setup-the-workshop&quot;&gt;Setup the Workshop&lt;/h2&gt;
+&lt;h2 id=&quot;setup-the-workshop&quot; tabindex=&quot;-1&quot;&gt;Setup the Workshop &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#setup-the-workshop&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;In Steam, set Gothic&#39;s beta version to &amp;quot;workshop.&amp;quot; To do this, navigate to the game settings (gear icon), select Properties, scroll down to Beta, and enable the workshop.&lt;/p&gt;
 &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/FVGst0ZgJ4-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/FVGst0ZgJ4-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/FVGst0ZgJ4-1280.jpeg&quot; alt=&quot;Steam Deck Beta screen where you can enable the workshop.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
-&lt;h2 id=&quot;enable-mods&quot;&gt;Enable Mods&lt;/h2&gt;
+&lt;h2 id=&quot;enable-mods&quot; tabindex=&quot;-1&quot;&gt;Enable Mods &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#enable-mods&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;Visit Gothic 1 workshop and subscribe to the following mods:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2787491081&quot;&gt;Union - patch for Gothic 1&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2793930041&quot;&gt;zGamePad - complete gamepad support&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2786936496&quot;&gt;Ninja&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2789245548&quot;&gt;Gothic 1 Community Patch&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2791606767&quot;&gt;DirectX 11 Renderer&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2813524957&quot;&gt;Mss32.dll - Union Linux sound fix&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2787491081&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Union - patch for Gothic 1&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2793930041&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;zGamePad - complete gamepad support&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2786936496&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Ninja&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2789245548&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Gothic 1 Community Patch&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2791606767&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;DirectX 11 Renderer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2813524957&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Mss32.dll - Union Linux sound fix&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&quot;callout warning&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Mod loading order matters!&lt;/div&gt;&lt;p&gt;The order in which these mods are loaded matters. You can let steam detect the ideal order using the option in the dropdown or order them yourself. You can see below the intended order.&lt;/p&gt;
 &lt;/div&gt;
 &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/AC5NhUt6Pi-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/AC5NhUt6Pi-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/AC5NhUt6Pi-1280.jpeg&quot; alt=&quot;Recommended mod list.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
-&lt;h2 id=&quot;setup-the-emulator&quot;&gt;Setup The Emulator&lt;/h2&gt;
+&lt;h2 id=&quot;setup-the-emulator&quot; tabindex=&quot;-1&quot;&gt;Setup The Emulator &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#setup-the-emulator&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;Since this is an old Windows game, it requires emulation. Steam comes preloaded with some Proton versions, but to load all the mods above, we need a custom version called ProtonUp-Qt.&lt;/p&gt;
 &lt;p&gt;To install this:&lt;/p&gt;
 &lt;ol&gt;
@@ -67,7 +67,7 @@ $ flatpak &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; com.
 &lt;p&gt;Launch the game. You should see the Gothic Mod Launcher screen.&lt;/p&gt;
 &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/iJ4Nx4e9B9-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/iJ4Nx4e9B9-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/iJ4Nx4e9B9-1280.jpeg&quot; alt=&quot;Gothic mod launcher.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
 &lt;p&gt;If you got this far—congratulations! But now, quit the game. We are not done yet; this step was just to allow the game to generate some required Proton directories.&lt;/p&gt;
-&lt;h2 id=&quot;directx11-and-music-fixes&quot;&gt;DirectX11 and Music Fixes&lt;/h2&gt;
+&lt;h2 id=&quot;directx11-and-music-fixes&quot; tabindex=&quot;-1&quot;&gt;DirectX11 and Music Fixes &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#directx11-and-music-fixes&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;If you play the game now, you’ll likely have no music and no DirectX 11 support. Let’s fix that.&lt;/p&gt;
 &lt;p&gt;Switch back to Desktop Mode and launch the Terminal again:&lt;/p&gt;
 &lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;$ flatpak run com.github.Matoking.protontricks &lt;span class=&quot;token number&quot;&gt;65540&lt;/span&gt; directmusic&lt;/code&gt;&lt;/pre&gt;
@@ -97,7 +97,7 @@ $ flatpak &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; com.
 &lt;ol start=&quot;5&quot;&gt;
 &lt;li&gt;Save and close&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&quot;fix-gd3d11-crash&quot;&gt;Fix GD3D11 crash&lt;/h2&gt;
+&lt;h2 id=&quot;fix-gd3d11-crash&quot; tabindex=&quot;-1&quot;&gt;Fix GD3D11 crash &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#fix-gd3d11-crash&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;At this point, the game should run fine. However, if you encounter a GD3D11 crash on launch, there’s a fix.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -118,13 +118,13 @@ $ flatpak &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; com.
 &lt;p&gt;Switch back to Game Mode and launch the game.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&quot;gamepad-support&quot;&gt;Gamepad support&lt;/h2&gt;
-&lt;p&gt;You’ll probably need to get used to Gothic’s old-school interaction system. &lt;a href=&quot;https://www.youtube.com/watch?v=n_vIs-kavqI&quot;&gt;Here&lt;/a&gt; is an explanatory video about it.
+&lt;h2 id=&quot;gamepad-support&quot; tabindex=&quot;-1&quot;&gt;Gamepad support &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#gamepad-support&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;You’ll probably need to get used to Gothic’s old-school interaction system. &lt;a href=&quot;https://www.youtube.com/watch?v=n_vIs-kavqI&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Here&lt;/a&gt; is an explanatory video about it.&lt;br&gt;
 However, you can improve the experience by activating a community controller layout. Navigate to:&lt;/p&gt;
 &lt;p&gt;Controller Settings (next to Settings on the game page)→ Community Layouts.&lt;/p&gt;
 &lt;p&gt;Experiment with different layouts to find the one that works best for you.&lt;/p&gt;
 &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/ES-NvrRiSx-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/ES-NvrRiSx-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/ES-NvrRiSx-1280.jpeg&quot; alt=&quot;Community controller layouts.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
-&lt;h2 id=&quot;enjoy&quot;&gt;Enjoy!&lt;/h2&gt;
+&lt;h2 id=&quot;enjoy!&quot; tabindex=&quot;-1&quot;&gt;Enjoy! &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#enjoy!&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;That’s it! You can now play this old classic, fully restored and with modern rendering features, on your Steam Deck. Happy gaming!&lt;/p&gt;
 </content>
   </entry>
