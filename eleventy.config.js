@@ -4,6 +4,8 @@ import pluginSyntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
 import pluginNavigation from "@11ty/eleventy-navigation";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import markdownIt from "markdown-it"; // Use ES module import for markdown-it
+import mdIterator from "markdown-it-for-inline"
+import markdownItAnchor from "markdown-it-anchor"
 
 import pluginFilters from "./_config/filters.js";
 
@@ -116,12 +118,24 @@ export default async function (eleventyConfig) {
 
 	// eleventyConfig.setServerPassthroughCopyBehavior("passthrough");
 
-	// Callout style
-	const md = new markdownIt({
+	// Add external link transformation
+	let md = markdownIt({
 		html: true,
 		breaks: true,
-		linkify: true,
-	});
+		linkify: true
+	}).use(mdIterator, 'url_new_win', 'link_open', function (tokens, idx) {
+		const [attrName, href] = tokens[idx].attrs.find(attr => attr[0] === 'href')
+
+		if (href && (!href.includes('franknoirot.co') && !href.startsWith('/') && !href.startsWith('#'))) {
+			tokens[idx].attrPush(['target', '_blank'])
+			tokens[idx].attrPush(['rel', 'noopener noreferrer'])
+		}
+	}).use(markdownItAnchor, {
+		permalink: true,
+		permalinkClass: "direct-link",
+		permalinkSymbol: "#"
+	})
+	eleventyConfig.setLibrary("md", md);
 
 	eleventyConfig.addPairedShortcode("callout", function (content, type = "note", title = "") {
 		let titleHtml = title ? `<div class="callout-title">${title}</div>` : '';
