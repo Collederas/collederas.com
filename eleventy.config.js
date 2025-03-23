@@ -25,7 +25,9 @@ export default async function (eleventyConfig) {
 			"./public/": "/"
 		})
 		.addPassthroughCopy("content/blog/**/*.{jpg,jpeg,png,gif,svg,webp}")
-		.addPassthroughCopy("./content/feed/pretty-atom-feed.xsl");
+		.addPassthroughCopy("./content/feed/pretty-atom-feed.xsl")
+		.addPassthroughCopy({ 'content/robots.txt': '/robots.txt' });
+
 
 	// Run Eleventy when these files change:
 	// https://www.11ty.dev/docs/watch-serve/#add-your-own-watch-targets
