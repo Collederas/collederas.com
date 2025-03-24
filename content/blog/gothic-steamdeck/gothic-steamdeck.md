@@ -1,5 +1,5 @@
 ---
-title: Enjoying Gothic 1 in 2025 on a Steam Deck.
+title: Enjoying Gothic 1 in 2025 on a Steam Deck
 description: Dedusting an old classic.
 date: 2025-03-17
 tags: gaming
