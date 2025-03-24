@@ -11,7 +11,7 @@ Picture this: You're debugging a complex piece of code that's been giving you tr
 
 ## A Personal Wake-Up Call
 
-In a [recent post](blog/unreal-debug-packaged-build), I explained how to debug a packaged Unreal build to investigate a very peculiar crash my game was subject to—one that gave away very little information in a pretty opaque stack trace. Before resorting to the solution that I explained in the post, I was trying to delete piece by piece areas of my map, in an attempt to isolate what I believed was a corrupted asset.
+In a [recent post](/blog/unreal-debug), I explained how to debug a packaged Unreal build to investigate a very peculiar crash my game was subject to—one that gave away very little information in a pretty opaque stack trace. Before resorting to the solution that I explained in the post, I was trying to delete piece by piece areas of my map, in an attempt to isolate what I believed was a corrupted asset.
 
 Delete, package, test. Fail. Repeat. Mindlessly. All because I didn't know better and I didn't want to go through the effort of figuring out a better approach.
 
