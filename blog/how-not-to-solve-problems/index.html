@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>How not to solve a problem</title>
+        <title>How Not to Solve a Problem</title>
         <meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
         <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
@@ -517,7 +517,7 @@ header {
         <main id="skip">
             <heading-anchors>
                 
-<h1 id="how-not-to-solve-a-problem">How not to solve a problem</h1>
+<h1 id="how-not-to-solve-a-problem">How Not to Solve a Problem</h1>
 
 <ul class="post-metadata">
 	<li><time datetime="2025-03-24">24 March 2025</time></li>
@@ -525,31 +525,16 @@ header {
 </ul>
 
 <h2 id="the-debugging-spiral-of-despair" tabindex="-1">The Debugging Spiral of Despair <a class="direct-link" href="#the-debugging-spiral-of-despair">#</a></h2>
-<p>Picture this: You're debugging a complex piece of code that's been giving you trouble for hours. Your screen is filled with half-attempted fixes, each more desperate than the last. You've stopped thinking and started clicking—trying random solutions, hoping something will magically work. Sound familiar?</p>
+<p>Picture this: You're debugging a complex piece of code that’s been trouble for hours. Your screen is filled with half-attempted fixes, each more desperate than the last. You've stopped thinking and started clicking—trying random solutions, hoping something will magically work. Sound familiar?</p>
 <h2 id="a-personal-wake-up-call" tabindex="-1">A Personal Wake-Up Call <a class="direct-link" href="#a-personal-wake-up-call">#</a></h2>
-<p>In a <a href="/blog/unreal-debug">recent post</a>, I explained how to debug a packaged Unreal build to investigate a very peculiar crash my game was subject to—one that gave away very little information in a pretty opaque stack trace. Before resorting to the solution that I explained in the post, I was trying to delete piece by piece areas of my map, in an attempt to isolate what I believed was a corrupted asset.</p>
-<p>Delete, package, test. Fail. Repeat. Mindlessly. All because I didn't know better and I didn't want to go through the effort of figuring out a better approach.</p>
-<p>After hours of this madness, I had made zero progress and created an even more convoluted mess of half-deleted maps. At least I am using version control. But that's not the point. I was simply wasting time. Then it dawned on me. I was falling victim to the brute force approach.</p>
+<p>In a <a href="/blog/unreal-debug">recent post</a>, I explained how to debug a packaged Unreal build to investigate a peculiar crash — one with an opaque stack trace that gave little away. Before that, I was deleting areas of my map piece by piece, trying to isolate what I thought was a corrupted asset. Delete, package, test. Fail. Repeat. Mindlessly. All because I didn’t know better and didn’t want to figure out a smarter approach. Hours later, with a mess of half-deleted maps and no progress, it hit me: I was brute-forcing it.</p>
 <h2 id="the-psychological-trap-of-unproductive-problem-solving" tabindex="-1">The Psychological Trap of Unproductive Problem-Solving <a class="direct-link" href="#the-psychological-trap-of-unproductive-problem-solving">#</a></h2>
-<p>This is something I tend to fall into more often than I care to admit. But, with time, I've learned to at least catch myself and step out of it.</p>
-<p>And it makes a difference. Time is valuable both for your clients, if you are working on contract, and for yourself. There are tons of better things that I would want to do rather than stubbornly trying to click my problems away.</p>
-<p>I don't know how common this behavior is, but I would guess I am not alone. I guess it's partly psychological. When faced with a challenging problem that I don't yet know how to approach, rather than &quot;wasting time&quot; thinking, it feels more productive to just keep at it relentlessly. It feels like I'm working hard. When in truth, I am just spinning my wheels.</p>
+<p>I fall into this more often than I’d like to admit. When faced with a tough problem, it feels productive to keep at it relentlessly — like I’m working hard. But I’m just spinning my wheels. I’d guess I’m not alone. It’s tempting to avoid &quot;wasting time&quot; thinking and instead click away stubbornly, even when it’s getting me nowhere.</p>
 <h2 id="a-better-approach%3A-thinking-with-purpose" tabindex="-1">A Better Approach: Thinking with Purpose <a class="direct-link" href="#a-better-approach%3A-thinking-with-purpose">#</a></h2>
-<p>The solution is to take a step back and start thinking again. Approaching things with purpose. Rubber ducking anyone?</p>
-<p>What I find useful is to think about it this way: you should at any point in time be able to describe your problem and also describe how your attempted solution proposes to fix it.</p>
-<p>Can you precisely describe:</p>
-<ul>
-<li>What the problem is</li>
-<li>What you've already tried</li>
-<li>Why those attempts didn't work</li>
-<li>What your next proposed solution actually aims to do</li>
-</ul>
+<p>The solution is to step back and think with purpose. Rubber ducking, anyone? At any point, you should be able to describe your problem and how your next step aims to fix it: What’s the issue? What’ve I tried? Why didn’t it work? What’s my plan now? In my case, I realized I needed more information. So I learned to breakpoint engine code in a packaged game crash. As the post shows, that led me to an old project setting I fixed in seconds.</p>
 <h2 id="the-power-of-stepping-back" tabindex="-1">The Power of Stepping Back <a class="direct-link" href="#the-power-of-stepping-back">#</a></h2>
-<p>Time is our most valuable resource—for clients, for ourselves, for our sanity. There are infinitely better ways to spend our energy than stubbornly trying to click problems away.</p>
-<p>In my case, once I stepped back and actually realized that what I was lacking was more information, I took a deep breath and decided to learn how to get a breakpoint into engine code during a packaged game crash, in order to be able to devise a new, appropriate solution. As you can see in the post, just that step was enough: the fix took me just about a few seconds to remove an old project setting.</p>
-<h2 id="a-final-reminder" tabindex="-1">A Final Reminder <a class="direct-link" href="#a-final-reminder">#</a></h2>
-<p>I don't know how universal this behavior is, but I'm willing to bet I'm not alone.</p>
-<p>Save yourself. Save your clients. Take a breath. Think. And act with purpose.</p>
+<p>Time is our most valuable resource—for clients, for ourselves, for our sanity. Once I stopped flailing and started thinking, I not only fixed a very nasty bug but also spared myself many more hours of frustration. A deliberate pause can outpace endless grinding.</p>
+<p>I don’t know how common this is, but I’m willing to bet I’m not alone. Save yourself. Take a breath. Think. Act with purpose. Your time’s worth it.</p>
 
 <ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/unreal-debug/">How to Debug an Unreal Engine Packaged Build</a></li>
 </ul>
@@ -583,7 +568,7 @@ header {
                 </em>
             </p>
         </footer>
-        <!-- This page `/blog/how-not-to-solve-problems/` was built on 2025-03-24T21:06:54.017Z -->
+        <!-- This page `/blog/how-not-to-solve-problems/` was built on 2025-03-24T21:19:30.770Z -->
         <script type="module" src="/dist/xbxy_EL6cU.js"></script>
         <!-- Google tag (gtag.js) -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>

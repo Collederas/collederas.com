@@ -11,36 +11,21 @@
     <name>Fabrizio Scandola - Dr. Collederas</name>
   </author>
   <entry>
-    <title>How not to solve a problem</title>
+    <title>How Not to Solve a Problem</title>
     <link href="https://collederas.com/blog/how-not-to-solve-problems/" />
     <updated>2025-03-24T00:00:00Z</updated>
     <id>https://collederas.com/blog/how-not-to-solve-problems/</id>
     <content type="html">&lt;h2 id=&quot;the-debugging-spiral-of-despair&quot; tabindex=&quot;-1&quot;&gt;The Debugging Spiral of Despair &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#the-debugging-spiral-of-despair&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;Picture this: You&#39;re debugging a complex piece of code that&#39;s been giving you trouble for hours. Your screen is filled with half-attempted fixes, each more desperate than the last. You&#39;ve stopped thinking and started clicking—trying random solutions, hoping something will magically work. Sound familiar?&lt;/p&gt;
+&lt;p&gt;Picture this: You&#39;re debugging a complex piece of code that’s been trouble for hours. Your screen is filled with half-attempted fixes, each more desperate than the last. You&#39;ve stopped thinking and started clicking—trying random solutions, hoping something will magically work. Sound familiar?&lt;/p&gt;
 &lt;h2 id=&quot;a-personal-wake-up-call&quot; tabindex=&quot;-1&quot;&gt;A Personal Wake-Up Call &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#a-personal-wake-up-call&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;In a &lt;a href=&quot;https://collederas.com/blog/unreal-debug&quot;&gt;recent post&lt;/a&gt;, I explained how to debug a packaged Unreal build to investigate a very peculiar crash my game was subject to—one that gave away very little information in a pretty opaque stack trace. Before resorting to the solution that I explained in the post, I was trying to delete piece by piece areas of my map, in an attempt to isolate what I believed was a corrupted asset.&lt;/p&gt;
-&lt;p&gt;Delete, package, test. Fail. Repeat. Mindlessly. All because I didn&#39;t know better and I didn&#39;t want to go through the effort of figuring out a better approach.&lt;/p&gt;
-&lt;p&gt;After hours of this madness, I had made zero progress and created an even more convoluted mess of half-deleted maps. At least I am using version control. But that&#39;s not the point. I was simply wasting time. Then it dawned on me. I was falling victim to the brute force approach.&lt;/p&gt;
+&lt;p&gt;In a &lt;a href=&quot;https://collederas.com/blog/unreal-debug&quot;&gt;recent post&lt;/a&gt;, I explained how to debug a packaged Unreal build to investigate a peculiar crash — one with an opaque stack trace that gave little away. Before that, I was deleting areas of my map piece by piece, trying to isolate what I thought was a corrupted asset. Delete, package, test. Fail. Repeat. Mindlessly. All because I didn’t know better and didn’t want to figure out a smarter approach. Hours later, with a mess of half-deleted maps and no progress, it hit me: I was brute-forcing it.&lt;/p&gt;
 &lt;h2 id=&quot;the-psychological-trap-of-unproductive-problem-solving&quot; tabindex=&quot;-1&quot;&gt;The Psychological Trap of Unproductive Problem-Solving &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#the-psychological-trap-of-unproductive-problem-solving&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;This is something I tend to fall into more often than I care to admit. But, with time, I&#39;ve learned to at least catch myself and step out of it.&lt;/p&gt;
-&lt;p&gt;And it makes a difference. Time is valuable both for your clients, if you are working on contract, and for yourself. There are tons of better things that I would want to do rather than stubbornly trying to click my problems away.&lt;/p&gt;
-&lt;p&gt;I don&#39;t know how common this behavior is, but I would guess I am not alone. I guess it&#39;s partly psychological. When faced with a challenging problem that I don&#39;t yet know how to approach, rather than &amp;quot;wasting time&amp;quot; thinking, it feels more productive to just keep at it relentlessly. It feels like I&#39;m working hard. When in truth, I am just spinning my wheels.&lt;/p&gt;
+&lt;p&gt;I fall into this more often than I’d like to admit. When faced with a tough problem, it feels productive to keep at it relentlessly — like I’m working hard. But I’m just spinning my wheels. I’d guess I’m not alone. It’s tempting to avoid &amp;quot;wasting time&amp;quot; thinking and instead click away stubbornly, even when it’s getting me nowhere.&lt;/p&gt;
 &lt;h2 id=&quot;a-better-approach%3A-thinking-with-purpose&quot; tabindex=&quot;-1&quot;&gt;A Better Approach: Thinking with Purpose &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#a-better-approach%3A-thinking-with-purpose&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;The solution is to take a step back and start thinking again. Approaching things with purpose. Rubber ducking anyone?&lt;/p&gt;
-&lt;p&gt;What I find useful is to think about it this way: you should at any point in time be able to describe your problem and also describe how your attempted solution proposes to fix it.&lt;/p&gt;
-&lt;p&gt;Can you precisely describe:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;What the problem is&lt;/li&gt;
-&lt;li&gt;What you&#39;ve already tried&lt;/li&gt;
-&lt;li&gt;Why those attempts didn&#39;t work&lt;/li&gt;
-&lt;li&gt;What your next proposed solution actually aims to do&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;The solution is to step back and think with purpose. Rubber ducking, anyone? At any point, you should be able to describe your problem and how your next step aims to fix it: What’s the issue? What’ve I tried? Why didn’t it work? What’s my plan now? In my case, I realized I needed more information. So I learned to breakpoint engine code in a packaged game crash. As the post shows, that led me to an old project setting I fixed in seconds.&lt;/p&gt;
 &lt;h2 id=&quot;the-power-of-stepping-back&quot; tabindex=&quot;-1&quot;&gt;The Power of Stepping Back &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#the-power-of-stepping-back&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;Time is our most valuable resource—for clients, for ourselves, for our sanity. There are infinitely better ways to spend our energy than stubbornly trying to click problems away.&lt;/p&gt;
-&lt;p&gt;In my case, once I stepped back and actually realized that what I was lacking was more information, I took a deep breath and decided to learn how to get a breakpoint into engine code during a packaged game crash, in order to be able to devise a new, appropriate solution. As you can see in the post, just that step was enough: the fix took me just about a few seconds to remove an old project setting.&lt;/p&gt;
-&lt;h2 id=&quot;a-final-reminder&quot; tabindex=&quot;-1&quot;&gt;A Final Reminder &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#a-final-reminder&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;I don&#39;t know how universal this behavior is, but I&#39;m willing to bet I&#39;m not alone.&lt;/p&gt;
-&lt;p&gt;Save yourself. Save your clients. Take a breath. Think. And act with purpose.&lt;/p&gt;
+&lt;p&gt;Time is our most valuable resource—for clients, for ourselves, for our sanity. Once I stopped flailing and started thinking, I not only fixed a very nasty bug but also spared myself many more hours of frustration. A deliberate pause can outpace endless grinding.&lt;/p&gt;
+&lt;p&gt;I don’t know how common this is, but I’m willing to bet I’m not alone. Save yourself. Take a breath. Think. Act with purpose. Your time’s worth it.&lt;/p&gt;
 </content>
   </entry>
   <entry>
