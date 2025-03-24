@@ -2,13 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 	
 	<url>
-		<loc>https://collederas.com/blog/gothic/gothic-steamdeck/</loc>
+		<loc>https://collederas.com/blog/gothic-steamdeck/</loc>
 		<lastmod>2025-03-17</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://collederas.com/blog/unreal-debug/unreal-debug-packaged-build/</loc>
+		<loc>https://collederas.com/blog/unreal-debug/</loc>
 		<lastmod>2025-03-23</lastmod>
+	</url>
+	
+	<url>
+		<loc>https://collederas.com/blog/how-not-to-solve-problems/</loc>
+		<lastmod>2025-03-24</lastmod>
 	</url>
 	
 	<url>
