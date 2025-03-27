@@ -114,19 +114,15 @@ _(This fixes some minor sound delay and crackling)_
 ## Fix GD3D11 crash
 At this point, the game should run fine. However, if you encounter a GD3D11 crash on launch, there’s a fix.
 
-1. Switch to Desktop Mode and open Firefox.
-2. Go to the GD3D11 GitHub page.
-3. Download the 17.8-dev9 version. (You can switch tags from the dropdown at the top, next to the "Branches and Tags" indicator.)
-4. Extract the contents and copy/paste the files from GitHub into the System folder. (Do not put them inside a GD3D11 subfolder —paste them directly in System). You can find the Gothic System folder under: 
+1. Launch the game and when presented with the mod screen, select GD3D11 and click on "Mod Files" at the top (you need to use the touch screen). This will open up a Windows-like filesystem browser. Note down the Location at the top (it is a big number).
+2. Switch to Desktop Mode and open Firefox.
+3. Go to the GD3D11 GitHub page.
+4. Download the 17.8-dev9 version. (You can switch tags from the dropdown at the top, next to the "Branches and Tags" indicator.)
+5. Navigate to the GD3D11 System folder you noted down earlier and delete all its content (not the System folder itself, just its content).
+6. Extract the files you downloaded from GitHub inside the now empty Systems folder.
+7. Switch back to Game Mode and launch the game.
 
-    ```text
-    Steam\steamapps\common\Gothic\system
-    ```
-
-    The AppID for Gothic is visible in the Steam URL when you navigate to your copy in the Library.
-
-5. Switch back to Game Mode and launch the game.
-
+_Thanks to Finalzero for commenting and pointing out an issue with this procedure. In an earlier version I was wrongly suggesting to unzip the github files directly in the Gothic system folder._
 
 ## Gamepad support
 
