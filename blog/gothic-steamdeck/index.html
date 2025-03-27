@@ -609,24 +609,15 @@ $ flatpak <span class="token function">install</span> com.github.Matoking.proton
 <h2 id="fix-gd3d11-crash" tabindex="-1">Fix GD3D11 crash <a class="direct-link" href="#fix-gd3d11-crash">#</a></h2>
 <p>At this point, the game should run fine. However, if you encounter a GD3D11 crash on launch, there’s a fix.</p>
 <ol>
-<li>
-<p>Switch to Desktop Mode and open Firefox.</p>
-</li>
-<li>
-<p>Go to the GD3D11 GitHub page.</p>
-</li>
-<li>
-<p>Download the 17.8-dev9 version. (You can switch tags from the dropdown at the top, next to the &quot;Branches and Tags&quot; indicator.)</p>
-</li>
-<li>
-<p>Extract the contents and copy/paste the files from GitHub into the System folder. (Do not put them inside a GD3D11 subfolder —paste them directly in System). You can find the Gothic System folder under:</p>
-<pre class="language-text" tabindex="0"><code class="language-text">Steam\steamapps\common\Gothic\system</code></pre>
-<p>The AppID for Gothic is visible in the Steam URL when you navigate to your copy in the Library.</p>
-</li>
-<li>
-<p>Switch back to Game Mode and launch the game.</p>
-</li>
+<li>Launch the game and when presented with the mod screen, select GD3D11 and click on &quot;Mod Files&quot; at the top (you need to use the touch screen). This will open up a Windows-like filesystem browser. Note down the Location at the top (it is a big number).</li>
+<li>Switch to Desktop Mode and open Firefox.</li>
+<li>Go to the GD3D11 GitHub page.</li>
+<li>Download the 17.8-dev9 version. (You can switch tags from the dropdown at the top, next to the &quot;Branches and Tags&quot; indicator.)</li>
+<li>Navigate to the GD3D11 System folder you noted down earlier and delete all its content (not the System folder itself, just its content).</li>
+<li>Extract the files you downloaded from GitHub inside the now empty Systems folder.</li>
+<li>Switch back to Game Mode and launch the game.</li>
 </ol>
+<p><em>Thanks to Finalzero for commenting and pointing out an issue with this procedure. In an earlier version I was wrongly suggesting to unzip the github files directly in the Gothic system folder.</em></p>
 <h2 id="gamepad-support" tabindex="-1">Gamepad support <a class="direct-link" href="#gamepad-support">#</a></h2>
 <p>You’ll probably need to get used to Gothic’s old-school interaction system. <a href="https://www.youtube.com/watch?v=n_vIs-kavqI" target="_blank" rel="noopener noreferrer">Here</a> is an explanatory video about it.<br>
 However, you can improve the experience by activating a community controller layout. Navigate to:</p>
@@ -668,7 +659,7 @@ However, you can improve the experience by activating a community controller lay
                 </em>
             </p>
         </footer>
-        <!-- This page `/blog/gothic-steamdeck/` was built on 2025-03-24T21:19:30.771Z -->
+        <!-- This page `/blog/gothic-steamdeck/` was built on 2025-03-27T15:05:29.130Z -->
         <script type="module" src="/dist/xbxy_EL6cU.js"></script>
         <!-- Google tag (gtag.js) -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
