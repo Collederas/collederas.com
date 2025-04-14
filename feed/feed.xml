@@ -56,9 +56,9 @@
 &lt;p&gt;Now, with this I am not advocating my style for everything. Every project has its own goals, and the approach varies based on those.&lt;/p&gt;
 &lt;h2 id=&quot;i-released-it!&quot; tabindex=&quot;-1&quot;&gt;I Released it! &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/build-bridge/#i-released-it!&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;In the end, I have in my hands a little tool that is an in-between solution — between a total lack of automation and a full CI/CD pipeline.&lt;/p&gt;
-&lt;p&gt;The tool forces some organization on the user, and allows publishing (albeit still manually) in a way that I find way friendlier than using a command line.&lt;/p&gt;
+&lt;p&gt;It forces some organization on the user, and allows publishing (albeit still manually) in a way that I find way friendlier than using a command line.&lt;/p&gt;
 &lt;p&gt;So I decided to make it public.&lt;br&gt;
-The binary is hosted on &lt;a href=&quot;http://itch.io&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;itch.io&lt;/a&gt; and can be downloaded &lt;a href=&quot;https://collederas.itch.io/build-bridge&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+The binary is hosted on Itch and can be downloaded &lt;a href=&quot;https://collederas.itch.io/build-bridge&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The code is fully open source, under the Apache license, and hosted &lt;a href=&quot;https://github.com/Collederas/build-bridge&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;on GitHub&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I have just released a beta version that you can try out by downloading it from itch.&lt;br&gt;
 The software is fully open source and you can check it out at &lt;a href=&quot;https://github.com/Collederas/build-bridge&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;https://github.com/Collederas/build-bridge&lt;/a&gt;.&lt;/p&gt;
