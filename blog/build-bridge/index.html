@@ -538,11 +538,11 @@ header {
 <li>Deploy to platforms using a few clicks</li>
 </ul>
 <p>For this, I came up with the following UI:</p>
-<picture><source type="image/avif" srcset="/blog/build-bridge/DOR5J1B7lJ-987.avif 987w"><source type="image/webp" srcset="/blog/build-bridge/DOR5J1B7lJ-987.webp 987w"><img loading="lazy" decoding="async" src="/blog/build-bridge/DOR5J1B7lJ-987.png" alt="Main UI" width="987" height="802"></picture>
+<picture><source type="image/avif" srcset="/blog/build-bridge/yw3q2-kOHk-1063.avif 1063w"><source type="image/webp" srcset="/blog/build-bridge/yw3q2-kOHk-1063.webp 1063w"><img loading="lazy" decoding="async" src="/blog/build-bridge/yw3q2-kOHk-1063.png" alt="Main UI" width="1063" height="809"></picture>
 <p>Two sections. The top one solves problem 1, the bottom one solves problem 2.</p>
 <h2 id="building" tabindex="-1">Building <a class="direct-link" href="#building">#</a></h2>
 <p>You start by creating a <strong>Build Target</strong>, which is a configuration that saves your build preferences.</p>
-<picture><source type="image/avif" srcset="/blog/build-bridge/yw3q2-kOHk-1063.avif 1063w"><source type="image/webp" srcset="/blog/build-bridge/yw3q2-kOHk-1063.webp 1063w"><img loading="lazy" decoding="async" src="/blog/build-bridge/yw3q2-kOHk-1063.png" alt="Build Target" width="1063" height="809"></picture>
+<picture><source type="image/avif" srcset="/blog/build-bridge/Jx9oDjGaPi-1201.avif 1201w"><source type="image/webp" srcset="/blog/build-bridge/Jx9oDjGaPi-1201.webp 1201w"><img loading="lazy" decoding="async" src="/blog/build-bridge/Jx9oDjGaPi-1201.png" alt="Build Target" width="1201" height="807"></picture>
 <p>With that information, the Builder will use the <code>RunUAT</code> batch file in the Engine (yes, you need Unreal installed, but if you are using this tool then that’s a safe assumption for me) to build the project, and it will store it in the directory you configured in the Project settings.</p>
 <p>You will be required to enter a version number in order to build, as you can see from the main interface. So builds will be located at:</p>
 <pre class="language-bash" tabindex="0"><code class="language-bash">ProjectName
@@ -557,7 +557,7 @@ header {
 </ul>
 <p>Also, for Steam, I need to make sure that the <code>contentroot</code> value is correctly set in the <code>.vdf</code> file (not to mention you need to create a <code>.vdf</code> file the first time you publish).</p>
 <p>So I automated all of that. The app stores your publishing preferences under a <strong>Publish Profile</strong>.</p>
-<picture><source type="image/avif" srcset="/blog/build-bridge/Jx9oDjGaPi-1201.avif 1201w"><source type="image/webp" srcset="/blog/build-bridge/Jx9oDjGaPi-1201.webp 1201w"><img loading="lazy" decoding="async" src="/blog/build-bridge/Jx9oDjGaPi-1201.png" alt="Publishing" width="1201" height="807"></picture>
+<picture><source type="image/avif" srcset="/blog/build-bridge/DOR5J1B7lJ-987.avif 987w"><source type="image/webp" srcset="/blog/build-bridge/DOR5J1B7lJ-987.webp 987w"><img loading="lazy" decoding="async" src="/blog/build-bridge/DOR5J1B7lJ-987.png" alt="Publishing" width="987" height="802"></picture>
 <p>I configure this once and then they are saved for each subsequent build. So then publishing is just a matter of selecting the target store and pressing the “Publish” button.</p>
 <p>This launches a wrapper around the related command-line tool in a separate process and shows logs in the dialog.</p>
 <picture><source type="image/avif" srcset="/blog/build-bridge/6fgO31nl---1053.avif 1053w"><source type="image/webp" srcset="/blog/build-bridge/6fgO31nl---1053.webp 1053w"><img loading="lazy" decoding="async" src="/blog/build-bridge/6fgO31nl---1053.png" alt="Pulish Dialog in action" width="1053" height="799"></picture>
@@ -575,7 +575,7 @@ The binary is hosted on Itch and can be downloaded <a href="https://collederas.i
 <p>I have just released a beta version that you can try out by downloading it from itch.<br>
 The software is fully open source and you can check it out at <a href="https://github.com/Collederas/build-bridge" target="_blank" rel="noopener noreferrer">https://github.com/Collederas/build-bridge</a>.</p>
 <p>I don’t know whether it currently packs enough features to appeal to a lot of developers out there, but if you are a fellow indie developer and happen to struggle with your release process — give it a try!</p>
-<p>I will base future support on my personal needs, but I’d be very happy to tailor it to other people’s use cases.</p>
+<p>I will base future support on my personal needs, but I’d be very happy to tailor it to other people’s use cases if anyone will have proposals.</p>
 
 <ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/how-not-to-solve-problems/">How Not to Solve a Problem</a></li>
 </ul>
@@ -609,7 +609,7 @@ The software is fully open source and you can check it out at <a href="https://g
                 </em>
             </p>
         </footer>
-        <!-- This page `/blog/build-bridge/` was built on 2025-04-14T09:53:56.886Z -->
+        <!-- This page `/blog/build-bridge/` was built on 2025-04-14T10:03:55.607Z -->
         <script type="module" src="/dist/xbxy_EL6cU.js"></script>
         <!-- Google tag (gtag.js) -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
