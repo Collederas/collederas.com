@@ -75,10 +75,10 @@ Now, with this I am not advocating my style for everything. Every project has it
 
 In the end, I have in my hands a little tool that is an in-between solution — between a total lack of automation and a full CI/CD pipeline.
 
-The tool forces some organization on the user, and allows publishing (albeit still manually) in a way that I find way friendlier than using a command line.
+It forces some organization on the user, and allows publishing (albeit still manually) in a way that I find way friendlier than using a command line.
 
 So I decided to make it public.  
-The binary is hosted on itch.io and can be downloaded [here](https://collederas.itch.io/build-bridge).
+The binary is hosted on Itch and can be downloaded [here](https://collederas.itch.io/build-bridge).
 
 The code is fully open source, under the Apache license, and hosted [on GitHub](https://github.com/Collederas/build-bridge).
 
