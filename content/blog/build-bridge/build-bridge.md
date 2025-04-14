@@ -21,7 +21,7 @@ With this tool I wanted to achieve 2 things:
 
 For this, I came up with the following UI:
 
-<img src="./image1.png" alt="Main UI">
+<img src="./image2.png" alt="Main UI">
 
 Two sections. The top one solves problem 1, the bottom one solves problem 2.
 
@@ -29,7 +29,7 @@ Two sections. The top one solves problem 1, the bottom one solves problem 2.
 
 You start by creating a **Build Target**, which is a configuration that saves your build preferences.
 
-<img src="./image2.png" alt="Build Target">
+<img src="./image3.png" alt="Build Target">
 
 
 With that information, the Builder will use the `RunUAT` batch file in the Engine (yes, you need Unreal installed, but if you are using this tool then that’s a safe assumption for me) to build the project, and it will store it in the directory you configured in the Project settings.
@@ -53,7 +53,7 @@ Also, for Steam, I need to make sure that the `contentroot` value is correctly s
 
 So I automated all of that. The app stores your publishing preferences under a **Publish Profile**.
 
-<img src="./image3.png" alt="Publishing">
+<img src="./image1.png" alt="Publishing">
 
 I configure this once and then they are saved for each subsequent build. So then publishing is just a matter of selecting the target store and pressing the “Publish” button.
 
@@ -87,4 +87,4 @@ The software is fully open source and you can check it out at [https://github.co
 
 I don’t know whether it currently packs enough features to appeal to a lot of developers out there, but if you are a fellow indie developer and happen to struggle with your release process — give it a try!
 
-I will base future support on my personal needs, but I’d be very happy to tailor it to other people’s use cases.
+I will base future support on my personal needs, but I’d be very happy to tailor it to other people’s use cases if anyone will have proposals.
