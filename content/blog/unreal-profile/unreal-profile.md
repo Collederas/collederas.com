@@ -28,13 +28,13 @@ I targeted the same build my friends were playtesting and... I started playing t
 
 After about 6 minutes of playing, I started seeing some clear and steady increase in the allocation count:
 
-<img src="./the_issue.jpg" alt="That's no good">
+<img src="./the_issue.png" alt="That's no good">
 
 You can see in the graph that the number of allocated objects keeps increasing and the Garbage Collector just can't keep up the pace.
 
 That is a good start. The next challenge is trying to figure out what could be causing the issue. I didn't immediately realised that something suspicious was going on but luckily the profiler has this concept of "Bookmarks" which are label given to specific events. Some of them are automatically assiged, like in the case of a Level Sequence playing or the Garbage Collector cleaning up some stale objects.
 
-<img src="./bookmarks.jpg" alt="Find your bearings">
+<img src="./bookmarks.png" alt="Find your bearings">
 
 This helped me noticing that the issue started appearing soon after the LS_Ruby sequencer played. LS_Ruby is the little cinematic playing when the player inserts the Ruby Key in the related panel as a mean to progress in the game's mansion.
 
@@ -90,4 +90,4 @@ But for sure this was a very nasty leak that is now patched for good.
 
 I'll be sure to update the post should I gain more insights on why the bomb field is causing uncontrolled UObject spawning and if this fix was enough to guarantee a crash free experience for the testers.
 
-For now, I am quite happy with what I managed to do on my first proper use of Unreal Isights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs in
+For now, I am quite happy with what I managed to do on my first proper use of Unreal Isights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs.
