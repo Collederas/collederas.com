@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>How Not to Solve a Problem</title>
+        <meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+        <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="icons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="icons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Dr. Collederas">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap">
+        <style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* Defaults */
+:root {
+	--font-family: 'Merriweather', serif;
+	--font-family-monospace: 'Courier Prime', monospace;
+}
+
+:root {
+    --color-gray-20: #e0e0e0;
+    --color-gray-50: #C0C0C0;
+    --color-gray-90: #333333;
+    --background-color: #fff;
+    --text-color: #222222;
+	--text-color-warning: #fd9a83ec;
+    --text-color-link: #1e88e5;
+    --text-color-link-active: #1565c0;
+    --text-color-link-visited: #3b8ad9;
+    --syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #222222;
+        --text-color: #e0e0e0;
+        --text-color-link: #66ccff;
+        --text-color-link-active: #0099cc;
+        --text-color-link-visited: #66b2ff;
+        --color-gray-20: #3c3c3c;
+        --color-gray-50: #666666;
+        --color-gray-90: #888888;
+    }
+}
+
+
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	overflow-y: scroll;
+}
+body {
+	max-width: 40em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+/* Fluid images via https://www.zachleat.com/web/fluid-images/ */
+img{
+  max-width: 100%;
+}
+img[width][height] {
+  height: auto;
+}
+img[src$=".svg"] {
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+video,
+iframe {
+	width: 100%;
+	height: auto;
+}
+iframe {
+	aspect-ratio: 16/9;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+.links-nextprev > * {
+	flex-grow: 1;
+}
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1em;
+}
+.home-link {
+	flex-grow: 1;
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	gap: .5em 1em;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+.callout {
+	margin: 1.75rem 0;
+	padding: 1.25rem;
+	border-left: 0.35rem solid var(--text-color-link);
+	background-color: var(--color-gray-20);
+	border-radius: 0.25rem;
+	font-family: var(--font-family);
+	line-height: 1.6;
+  }
+  
+  .callout-title {
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+  }
+  
+  .callout.note {
+	border-color: var(--text-color-link);
+  }
+
+  .callout.warning {
+	border-color: var(--text-color-warning);
+  }</style>
+    </head>
+        <body><a href="#skip" class="visually-hidden">Skip to main content</a>
+        <header>
+            <a href="/" class="home-link">Dr. Collederas</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Archive</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header>
+        <main id="skip">
+            <heading-anchors>
+                
+<h1 id="how-not-to-solve-a-problem">How Not to Solve a Problem</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2025-03-24">24 March 2025</time></li>
+	<li><a href="/tags/chat/" class="post-tag">chat</a></li>
+</ul>
+
+<h2 id="the-debugging-spiral-of-despair" tabindex="-1">The Debugging Spiral of Despair <a class="direct-link" href="#the-debugging-spiral-of-despair">#</a></h2>
+<p>Picture this: You're debugging a complex piece of code that’s been trouble for hours. Your screen is filled with half-attempted fixes, each more desperate than the last. You've stopped thinking and started clicking—trying random solutions, hoping something will magically work. Sound familiar?</p>
+<h2 id="a-personal-wake-up-call" tabindex="-1">A Personal Wake-Up Call <a class="direct-link" href="#a-personal-wake-up-call">#</a></h2>
+<p>In a <a href="/blog/unreal-debug">recent post</a>, I explained how to debug a packaged Unreal build to investigate a peculiar crash — one with an opaque stack trace that gave little away. Before that, I was deleting areas of my map piece by piece, trying to isolate what I thought was a corrupted asset. Delete, package, test. Fail. Repeat. Mindlessly. All because I didn’t know better and didn’t want to figure out a smarter approach. Hours later, with a mess of half-deleted maps and no progress, it hit me: I was brute-forcing it.</p>
+<h2 id="the-psychological-trap-of-unproductive-problem-solving" tabindex="-1">The Psychological Trap of Unproductive Problem-Solving <a class="direct-link" href="#the-psychological-trap-of-unproductive-problem-solving">#</a></h2>
+<p>I fall into this more often than I’d like to admit. When faced with a tough problem, it feels productive to keep at it relentlessly — like I’m working hard. But I’m just spinning my wheels. I’d guess I’m not alone. It’s tempting to avoid &quot;wasting time&quot; thinking and instead click away stubbornly, even when it’s getting me nowhere.</p>
+<h2 id="a-better-approach%3A-thinking-with-purpose" tabindex="-1">A Better Approach: Thinking with Purpose <a class="direct-link" href="#a-better-approach%3A-thinking-with-purpose">#</a></h2>
+<p>The solution is to step back and think with purpose. Rubber ducking, anyone? At any point, you should be able to describe your problem and how your next step aims to fix it: What’s the issue? What’ve I tried? Why didn’t it work? What’s my plan now? In my case, I realized I needed more information. So I learned to breakpoint engine code in a packaged game crash. As the post shows, that led me to an old project setting I fixed in seconds.</p>
+<h2 id="the-power-of-stepping-back" tabindex="-1">The Power of Stepping Back <a class="direct-link" href="#the-power-of-stepping-back">#</a></h2>
+<p>Time is our most valuable resource—for clients, for ourselves, for our sanity. Once I stopped flailing and started thinking, I not only fixed a very nasty bug but also spared myself many more hours of frustration. A deliberate pause can outpace endless grinding.</p>
+<p>I don’t know how common this is, but I’m willing to bet I’m not alone. Save yourself. Take a breath. Think. Act with purpose. Your time’s worth it.</p>
+
+<ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/unreal-debug/">How to Debug an Unreal Engine Packaged Build</a></li><li class="links-nextprev-next">Next →<br><a href="/blog/build-bridge/">I released a semi-automation tool for Unreal</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    
+    var disqus_config = function () {
+     	this.page.url = "https://collederas.com/blog/how-not-to-solve-problems/";
+        this.page.identifier = "how-not-to-solve-problems";
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://skatest1.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </heading-anchors>
+        </main>
+        <footer>
+            <p>
+                <em>Built with
+                    <a href="https://www.11ty.dev/">Eleventy v3.1.0</a>
+                </em>
+            </p>
+        </footer>
+        <!-- This page `/blog/how-not-to-solve-problems/` was built on 2025-05-14T22:22:19.035Z -->
+        <script type="module" src="/dist/xbxy_EL6cU.js"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-M4V1XCD4EB');
+        </script>
+    </body>
+</html>

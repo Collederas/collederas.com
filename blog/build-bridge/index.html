@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>I released a semi-automation tool for Unreal</title>
+        <meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+        <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="icons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="icons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Dr. Collederas">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap">
+        <style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* Defaults */
+:root {
+	--font-family: 'Merriweather', serif;
+	--font-family-monospace: 'Courier Prime', monospace;
+}
+
+:root {
+    --color-gray-20: #e0e0e0;
+    --color-gray-50: #C0C0C0;
+    --color-gray-90: #333333;
+    --background-color: #fff;
+    --text-color: #222222;
+	--text-color-warning: #fd9a83ec;
+    --text-color-link: #1e88e5;
+    --text-color-link-active: #1565c0;
+    --text-color-link-visited: #3b8ad9;
+    --syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #222222;
+        --text-color: #e0e0e0;
+        --text-color-link: #66ccff;
+        --text-color-link-active: #0099cc;
+        --text-color-link-visited: #66b2ff;
+        --color-gray-20: #3c3c3c;
+        --color-gray-50: #666666;
+        --color-gray-90: #888888;
+    }
+}
+
+
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	overflow-y: scroll;
+}
+body {
+	max-width: 40em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+/* Fluid images via https://www.zachleat.com/web/fluid-images/ */
+img{
+  max-width: 100%;
+}
+img[width][height] {
+  height: auto;
+}
+img[src$=".svg"] {
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+video,
+iframe {
+	width: 100%;
+	height: auto;
+}
+iframe {
+	aspect-ratio: 16/9;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+.links-nextprev > * {
+	flex-grow: 1;
+}
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1em;
+}
+.home-link {
+	flex-grow: 1;
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	gap: .5em 1em;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+.callout {
+	margin: 1.75rem 0;
+	padding: 1.25rem;
+	border-left: 0.35rem solid var(--text-color-link);
+	background-color: var(--color-gray-20);
+	border-radius: 0.25rem;
+	font-family: var(--font-family);
+	line-height: 1.6;
+  }
+  
+  .callout-title {
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+  }
+  
+  .callout.note {
+	border-color: var(--text-color-link);
+  }
+
+  .callout.warning {
+	border-color: var(--text-color-warning);
+  }</style>
+    </head>
+        <body><a href="#skip" class="visually-hidden">Skip to main content</a>
+        <header>
+            <a href="/" class="home-link">Dr. Collederas</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Archive</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header>
+        <main id="skip">
+            <heading-anchors>
+                
+<h1 id="i-released-a-semi-automation-tool-for-unreal">I released a semi-automation tool for Unreal</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2025-04-14">14 April 2025</time></li>
+	<li><a href="/tags/gamedev/" class="post-tag">gamedev</a>, </li>
+	<li><a href="/tags/tools/" class="post-tag">tools</a>, </li>
+	<li><a href="/tags/release-process/" class="post-tag">release-process</a>, </li>
+	<li><a href="/tags/indie/" class="post-tag">indie</a></li>
+</ul>
+
+<h2 id="a-lightweight-tool-to-build-and-publish-my-game-to-itch-and-steam" tabindex="-1">A lightweight tool to Build and Publish my Game to Itch and Steam <a class="direct-link" href="#a-lightweight-tool-to-build-and-publish-my-game-to-itch-and-steam">#</a></h2>
+<p>I am currently playtesting my upcoming game -One Last Toast- and in this phase I need to iterate quickly: make a build, deploy, fix bugs, make another build.</p>
+<p>Now, I am alone and have no fancy studio with proper CI/CD pipelines set up, so I was doing all of this manually.</p>
+<p>Then one afternoon I decided that, while proper automation is probably overkill, having some sort of tool to make the process smoother would be nice.</p>
+<h2 id="the-app" tabindex="-1">The App <a class="direct-link" href="#the-app">#</a></h2>
+<p>With this tool I wanted to achieve 2 things:</p>
+<ul>
+<li>Have a structured system to keep all builds in one folder, organized by version number</li>
+<li>Deploy to platforms using a few clicks</li>
+</ul>
+<p>For this, I came up with the following UI:</p>
+<picture><source type="image/avif" srcset="/blog/build-bridge/yw3q2-kOHk-1063.avif 1063w"><source type="image/webp" srcset="/blog/build-bridge/yw3q2-kOHk-1063.webp 1063w"><img loading="lazy" decoding="async" src="/blog/build-bridge/yw3q2-kOHk-1063.png" alt="Main UI" width="1063" height="809"></picture>
+<p>Two sections. The top one solves problem 1, the bottom one solves problem 2.</p>
+<h2 id="building" tabindex="-1">Building <a class="direct-link" href="#building">#</a></h2>
+<p>You start by creating a <strong>Build Target</strong>, which is a configuration that saves your build preferences.</p>
+<picture><source type="image/avif" srcset="/blog/build-bridge/Jx9oDjGaPi-1201.avif 1201w"><source type="image/webp" srcset="/blog/build-bridge/Jx9oDjGaPi-1201.webp 1201w"><img loading="lazy" decoding="async" src="/blog/build-bridge/Jx9oDjGaPi-1201.png" alt="Build Target" width="1201" height="807"></picture>
+<p>With that information, the Builder will use the <code>RunUAT</code> batch file in the Engine (yes, you need Unreal installed, but if you are using this tool then that’s a safe assumption for me) to build the project, and it will store it in the directory you configured in the Project settings.</p>
+<p>You will be required to enter a version number in order to build, as you can see from the main interface. So builds will be located at:</p>
+<pre class="language-bash" tabindex="0"><code class="language-bash">ProjectName
+	<span class="token punctuation">\</span>_ BuildVersion <span class="token punctuation">(</span>eg. v0.1<span class="token punctuation">)</span>
+		<span class="token punctuation">\</span>_ Windows
+	<span class="token punctuation">\</span>_ BuildVersion <span class="token punctuation">(</span>eg. v0.2<span class="token punctuation">)</span></code></pre>
+<h2 id="publishing" tabindex="-1">Publishing <a class="direct-link" href="#publishing">#</a></h2>
+<p>The bottom part solves issue number 2: once I make a build I usually need to go get the right tool to publish the update. That would be:</p>
+<ul>
+<li><code>butler</code>, for Itch</li>
+<li><code>SteamCMD</code>, for Steam</li>
+</ul>
+<p>Also, for Steam, I need to make sure that the <code>contentroot</code> value is correctly set in the <code>.vdf</code> file (not to mention you need to create a <code>.vdf</code> file the first time you publish).</p>
+<p>So I automated all of that. The app stores your publishing preferences under a <strong>Publish Profile</strong>.</p>
+<picture><source type="image/avif" srcset="/blog/build-bridge/DOR5J1B7lJ-987.avif 987w"><source type="image/webp" srcset="/blog/build-bridge/DOR5J1B7lJ-987.webp 987w"><img loading="lazy" decoding="async" src="/blog/build-bridge/DOR5J1B7lJ-987.png" alt="Publishing" width="987" height="802"></picture>
+<p>I configure this once and then they are saved for each subsequent build. So then publishing is just a matter of selecting the target store and pressing the “Publish” button.</p>
+<p>This launches a wrapper around the related command-line tool in a separate process and shows logs in the dialog.</p>
+<picture><source type="image/avif" srcset="/blog/build-bridge/6fgO31nl---1053.avif 1053w"><source type="image/webp" srcset="/blog/build-bridge/6fgO31nl---1053.webp 1053w"><img loading="lazy" decoding="async" src="/blog/build-bridge/6fgO31nl---1053.png" alt="Pulish Dialog in action" width="1053" height="799"></picture>
+<h2 id="speed-vs-quality" tabindex="-1">Speed vs Quality <a class="direct-link" href="#speed-vs-quality">#</a></h2>
+<p>As I was developing, I initially gave in and let LLMs do most of the work. I had a design in mind, but the implementation was left to whatever AI chatbot I felt like using at the moment.</p>
+<p>While on one hand this allowed me to have a working build quite soon — in less than a week — the time I then spent, and still have to spend, refactoring all the oddities that this caused is not negligible.</p>
+<p>Still, I find it way less stressful to have a working product that does what it needs and that I can then refactor at my convenience, than putting a lot of effort and time into trying to come up with the perfect design upfront and delaying testing the product in the field by a lot.</p>
+<p>Now, with this I am not advocating my style for everything. Every project has its own goals, and the approach varies based on those.</p>
+<h2 id="i-released-it!" tabindex="-1">I Released it! <a class="direct-link" href="#i-released-it!">#</a></h2>
+<p>In the end, I have in my hands a little tool that is an in-between solution — between a total lack of automation and a full CI/CD pipeline.</p>
+<p>It forces some organization on the user, and allows publishing (albeit still manually) in a way that I find way friendlier than using a command line.</p>
+<p>So I decided to make it public.<br>
+The binary is hosted on Itch and can be downloaded <a href="https://collederas.itch.io/build-bridge" target="_blank" rel="noopener noreferrer">here</a>.</p>
+<p>The code is fully open source, under the Apache license, and hosted <a href="https://github.com/Collederas/build-bridge" target="_blank" rel="noopener noreferrer">on GitHub</a>.</p>
+<p>I have just released a beta version that you can try out by downloading it from itch.<br>
+The software is fully open source and you can check it out at <a href="https://github.com/Collederas/build-bridge" target="_blank" rel="noopener noreferrer">https://github.com/Collederas/build-bridge</a>.</p>
+<p>I don’t know whether it currently packs enough features to appeal to a lot of developers out there, but if you are a fellow indie developer and happen to struggle with your release process — give it a try!</p>
+<p>I will base future support on my personal needs, but I’d be very happy to tailor it to other people’s use cases if anyone will have proposals.</p>
+
+<ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/how-not-to-solve-problems/">How Not to Solve a Problem</a></li><li class="links-nextprev-next">Next →<br><a href="/blog/unreal-profile/">Profiling a case of object leak with Unreal Insights</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    
+    var disqus_config = function () {
+     	this.page.url = "https://collederas.com/blog/build-bridge/";
+        this.page.identifier = "build-bridge";
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://skatest1.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </heading-anchors>
+        </main>
+        <footer>
+            <p>
+                <em>Built with
+                    <a href="https://www.11ty.dev/">Eleventy v3.1.0</a>
+                </em>
+            </p>
+        </footer>
+        <!-- This page `/blog/build-bridge/` was built on 2025-05-14T22:22:19.034Z -->
+        <script type="module" src="/dist/xbxy_EL6cU.js"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-M4V1XCD4EB');
+        </script>
+    </body>
+</html>

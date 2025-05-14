@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="pretty-atom-feed.xsl" type="text/xsl"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+  <title>Dr. Collederas</title>
+  <subtitle>Anything I find interesting and useful for others to enjoy.</subtitle>
+  <link href="https://collederas.com/feed/feed.xml" rel="self" />
+  <link href="https://collederas.com/" />
+  <updated>2025-05-14T00:00:00Z</updated>
+  <id>https://collederas.com/</id>
+  <author>
+    <name>Fabrizio Scandola - Dr. Collederas</name>
+  </author>
+  <entry>
+    <title>Profiling a case of object leak with Unreal Insights</title>
+    <link href="https://collederas.com/blog/unreal-profile/" />
+    <updated>2025-05-14T00:00:00Z</updated>
+    <id>https://collederas.com/blog/unreal-profile/</id>
+    <content type="html">&lt;div class=&quot;callout warning&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Profiling Matters!&lt;/div&gt;&lt;p&gt;Unreal Insights helped me identify a UObject leak tied to an explosion event. The root cause was an overly complex Bomb Field actor not being cleaned up. Adding a 2-second lifetime destroy fixed the issue.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;I have recently opened up my upcoming game (&lt;a href=&quot;https://store.steampowered.com/app/3639210/One_Last_Toast/&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;&amp;quot;One Last Toast&amp;quot;&lt;/a&gt;) for a closed beta test among friends.&lt;/p&gt;
+&lt;p&gt;Among a plethora of other bugs they reported, one stood out more ominously than the rest:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/p9bPe3oSI0-993.avif 993w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/p9bPe3oSI0-993.webp 993w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/p9bPe3oSI0-993.jpeg&quot; alt=&quot;Stop spawning stuff!&quot; width=&quot;993&quot; height=&quot;206&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;The reports had this happen midway through a playthrough.&lt;/p&gt;
+&lt;p&gt;At a quick glance the issue is clear: too many UObjects (Unreal&#39;s own object base class) are being spawned in the game, they are piling up and, when they reach a safeguard limit, the engine shuts down to prevent the leak from eating up more resources.&lt;/p&gt;
+&lt;p&gt;Great.&lt;/p&gt;
+&lt;p&gt;Now, who is the culprit?&lt;/p&gt;
+&lt;p&gt;That is the harder question. Profiling tools to the rescue!&lt;/p&gt;
+&lt;h2 id=&quot;profiling-for-object-leaks&quot; tabindex=&quot;-1&quot;&gt;Profiling for object leaks &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-profile/#profiling-for-object-leaks&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The first thing I did was start UnrealInsights.exe with relevant arguments to display memory and UObject-related data (&lt;code&gt;memory,object&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;I targeted the same build my friends were playtesting and... I started playing the game. In order to focus on the specific problem at hand I used the handy LLM tags to display only UObject allocation and deallocation events.&lt;/p&gt;
+&lt;p&gt;After about 6 minutes of playing, I started seeing a clear and steady increase in the allocation count:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/LcWltFEzjx-3486.avif 3486w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/LcWltFEzjx-3486.webp 3486w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/LcWltFEzjx-3486.png&quot; alt=&quot;That&#39;s no good&quot; width=&quot;3486&quot; height=&quot;934&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;You can see in the graph that the number of allocated objects keeps increasing and the Garbage Collector just can&#39;t keep up the pace.&lt;/p&gt;
+&lt;p&gt;That is a good start. The next challenge is trying to figure out what could be causing the issue. I didn&#39;t immediately realize that something suspicious was going on, but luckily the profiler has this concept of &amp;quot;Bookmarks,&amp;quot; which are labels given to specific events. Some of them are automatically assigned, like in the case of a Level Sequence playing or the Garbage Collector cleaning up some stale objects.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/EDV_7Z7iFF-886.avif 886w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/EDV_7Z7iFF-886.webp 886w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/EDV_7Z7iFF-886.png&quot; alt=&quot;Find your bearings&quot; width=&quot;886&quot; height=&quot;88&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;This helped me notice that the issue started appearing soon after the LS_Ruby sequencer played. LS_Ruby is the little cinematic playing when the player inserts the Ruby Key in the related panel as a means to progress in the game&#39;s mansion.&lt;/p&gt;
+&lt;p&gt;That gave me a significant hint as to where the problem was starting from.&lt;/p&gt;
+&lt;p&gt;With this in mind, I decided to narrow down my guess even further. I fired up the editor with the same trace profile:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;start &amp;quot;&amp;quot; &amp;quot;C:&#92;Program Files&#92;Epic Games&#92;UE_5.X&#92;Engine&#92;Binaries&#92;Win64&#92;UnrealEditor.exe&amp;quot; OneLastToast.uproject -trace=default,memory,object,loadtime -statnamedevents
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and positioned myself straight in front of the Ruby Door.&lt;br&gt;
+What happened after entering is the following:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/yWb86JDVMI-540.webp 540w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/yWb86JDVMI-540.gif&quot; alt=&quot;Something&#39;s afoot with this explosion&quot; width=&quot;540&quot; height=&quot;304&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Look at the LLM UObject allocation graph at the bottom: sure enough, something is going on with this explosion. I left the insights running and confirmed that this was not a temporary thing: the graph kept going up steadily after this event.&lt;/p&gt;
+&lt;p&gt;I started looking for spawning logic related to the explosion and:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/_BLymqlX1U-1369.avif 1369w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/_BLymqlX1U-1369.webp 1369w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/_BLymqlX1U-1369.png&quot; alt=&quot;The culprit&quot; width=&quot;1369&quot; height=&quot;814&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;A likely culprit appeared.&lt;/p&gt;
+&lt;p&gt;FS Bomb Field is an actor that I subclassed directly from an Engine example, which is in charge of applying all the physics effects related to the explosion.&lt;/p&gt;
+&lt;p&gt;On its own, the spawning logic I have in my Blueprint is not enough to justify a memory leak, but this behemoth of a Bomb Field actor is doing so much, and somewhere in the logic managing the collision of the field with other actors, it is causing wild object spawning.&lt;/p&gt;
+&lt;p&gt;I am actually not sure where and why this happens. The Bomb Field logic is quite... intense...&lt;/p&gt;
+&lt;img src=&quot;https://collederas.com/blog/unreal-profile/content/blog/unreal-profile/bombfield-bp.png&quot; alt=&quot;Bombfield madness&quot;&gt;
+&lt;p&gt;And this is not even all the graph. I tried to look for spawning-inducing logic in this madness but could not really find it.&lt;/p&gt;
+&lt;p&gt;What I do know is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;There is a clear memory leak&lt;/li&gt;
+&lt;li&gt;The leak starts to happen right after the enemy explodes (I tried the same enemy exploding on an empty map and the same pattern appeared)&lt;/li&gt;
+&lt;li&gt;The Bomb Field is a big Blueprint with lots of collision spheres and logic&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside all its logic and its cumbersome footprint, would help. I did set a lifetime for it here:&lt;/p&gt;
+&lt;img src=&quot;https://collederas.com/blog/unreal-profile/content/blog/unreal-profile/fix-field.png&quot; alt=&quot;Destroy the field after 2 seconds!&quot;&gt;
+&lt;p&gt;So that after 2 seconds (enough for the explosion forces to push nearby bodies away) the actor is destroyed and look at that:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/xpe8YcBZnh-540.webp 540w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/xpe8YcBZnh-540.gif&quot; alt=&quot;No more leaks upon explosion&quot; width=&quot;540&quot; height=&quot;304&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;No more sudden increase of UObject allocation after the explosion! I let the thing run for a while just to be sure but all seems good now.&lt;/p&gt;
+&lt;p&gt;Will this fix the original crash definitively? I hope! But I can&#39;t really guarantee that there aren&#39;t other possible causes yet.&lt;/p&gt;
+&lt;p&gt;But for sure this was a very nasty leak that is now patched for good.&lt;/p&gt;
+&lt;p&gt;I&#39;ll be sure to update the post should I gain more insights on why the Bomb Field is causing uncontrolled UObject spawning and if this fix was enough to guarantee a crash-free experience for the testers.&lt;/p&gt;
+&lt;p&gt;For now, I am quite happy with what I managed to do on my first proper use of Unreal Insights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs in their games!&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>I released a semi-automation tool for Unreal</title>
+    <link href="https://collederas.com/blog/build-bridge/" />
+    <updated>2025-04-14T00:00:00Z</updated>
+    <id>https://collederas.com/blog/build-bridge/</id>
+    <content type="html">&lt;h2 id=&quot;a-lightweight-tool-to-build-and-publish-my-game-to-itch-and-steam&quot; tabindex=&quot;-1&quot;&gt;A lightweight tool to Build and Publish my Game to Itch and Steam &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/build-bridge/#a-lightweight-tool-to-build-and-publish-my-game-to-itch-and-steam&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;I am currently playtesting my upcoming game -One Last Toast- and in this phase I need to iterate quickly: make a build, deploy, fix bugs, make another build.&lt;/p&gt;
+&lt;p&gt;Now, I am alone and have no fancy studio with proper CI/CD pipelines set up, so I was doing all of this manually.&lt;/p&gt;
+&lt;p&gt;Then one afternoon I decided that, while proper automation is probably overkill, having some sort of tool to make the process smoother would be nice.&lt;/p&gt;
+&lt;h2 id=&quot;the-app&quot; tabindex=&quot;-1&quot;&gt;The App &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/build-bridge/#the-app&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;With this tool I wanted to achieve 2 things:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Have a structured system to keep all builds in one folder, organized by version number&lt;/li&gt;
+&lt;li&gt;Deploy to platforms using a few clicks&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For this, I came up with the following UI:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/build-bridge/yw3q2-kOHk-1063.avif 1063w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/build-bridge/yw3q2-kOHk-1063.webp 1063w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/build-bridge/yw3q2-kOHk-1063.png&quot; alt=&quot;Main UI&quot; width=&quot;1063&quot; height=&quot;809&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Two sections. The top one solves problem 1, the bottom one solves problem 2.&lt;/p&gt;
+&lt;h2 id=&quot;building&quot; tabindex=&quot;-1&quot;&gt;Building &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/build-bridge/#building&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;You start by creating a &lt;strong&gt;Build Target&lt;/strong&gt;, which is a configuration that saves your build preferences.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/build-bridge/Jx9oDjGaPi-1201.avif 1201w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/build-bridge/Jx9oDjGaPi-1201.webp 1201w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/build-bridge/Jx9oDjGaPi-1201.png&quot; alt=&quot;Build Target&quot; width=&quot;1201&quot; height=&quot;807&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;With that information, the Builder will use the &lt;code&gt;RunUAT&lt;/code&gt; batch file in the Engine (yes, you need Unreal installed, but if you are using this tool then that’s a safe assumption for me) to build the project, and it will store it in the directory you configured in the Project settings.&lt;/p&gt;
+&lt;p&gt;You will be required to enter a version number in order to build, as you can see from the main interface. So builds will be located at:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;ProjectName
+	&lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;_ BuildVersion &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;eg. v0.1&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;_ Windows
+	&lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;_ BuildVersion &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;eg. v0.2&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;publishing&quot; tabindex=&quot;-1&quot;&gt;Publishing &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/build-bridge/#publishing&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The bottom part solves issue number 2: once I make a build I usually need to go get the right tool to publish the update. That would be:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;butler&lt;/code&gt;, for Itch&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SteamCMD&lt;/code&gt;, for Steam&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Also, for Steam, I need to make sure that the &lt;code&gt;contentroot&lt;/code&gt; value is correctly set in the &lt;code&gt;.vdf&lt;/code&gt; file (not to mention you need to create a &lt;code&gt;.vdf&lt;/code&gt; file the first time you publish).&lt;/p&gt;
+&lt;p&gt;So I automated all of that. The app stores your publishing preferences under a &lt;strong&gt;Publish Profile&lt;/strong&gt;.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/build-bridge/DOR5J1B7lJ-987.avif 987w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/build-bridge/DOR5J1B7lJ-987.webp 987w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/build-bridge/DOR5J1B7lJ-987.png&quot; alt=&quot;Publishing&quot; width=&quot;987&quot; height=&quot;802&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;I configure this once and then they are saved for each subsequent build. So then publishing is just a matter of selecting the target store and pressing the “Publish” button.&lt;/p&gt;
+&lt;p&gt;This launches a wrapper around the related command-line tool in a separate process and shows logs in the dialog.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/build-bridge/6fgO31nl---1053.avif 1053w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/build-bridge/6fgO31nl---1053.webp 1053w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/build-bridge/6fgO31nl---1053.png&quot; alt=&quot;Pulish Dialog in action&quot; width=&quot;1053&quot; height=&quot;799&quot;&gt;&lt;/picture&gt;
+&lt;h2 id=&quot;speed-vs-quality&quot; tabindex=&quot;-1&quot;&gt;Speed vs Quality &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/build-bridge/#speed-vs-quality&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;As I was developing, I initially gave in and let LLMs do most of the work. I had a design in mind, but the implementation was left to whatever AI chatbot I felt like using at the moment.&lt;/p&gt;
+&lt;p&gt;While on one hand this allowed me to have a working build quite soon — in less than a week — the time I then spent, and still have to spend, refactoring all the oddities that this caused is not negligible.&lt;/p&gt;
+&lt;p&gt;Still, I find it way less stressful to have a working product that does what it needs and that I can then refactor at my convenience, than putting a lot of effort and time into trying to come up with the perfect design upfront and delaying testing the product in the field by a lot.&lt;/p&gt;
+&lt;p&gt;Now, with this I am not advocating my style for everything. Every project has its own goals, and the approach varies based on those.&lt;/p&gt;
+&lt;h2 id=&quot;i-released-it!&quot; tabindex=&quot;-1&quot;&gt;I Released it! &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/build-bridge/#i-released-it!&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;In the end, I have in my hands a little tool that is an in-between solution — between a total lack of automation and a full CI/CD pipeline.&lt;/p&gt;
+&lt;p&gt;It forces some organization on the user, and allows publishing (albeit still manually) in a way that I find way friendlier than using a command line.&lt;/p&gt;
+&lt;p&gt;So I decided to make it public.&lt;br&gt;
+The binary is hosted on Itch and can be downloaded &lt;a href=&quot;https://collederas.itch.io/build-bridge&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The code is fully open source, under the Apache license, and hosted &lt;a href=&quot;https://github.com/Collederas/build-bridge&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I have just released a beta version that you can try out by downloading it from itch.&lt;br&gt;
+The software is fully open source and you can check it out at &lt;a href=&quot;https://github.com/Collederas/build-bridge&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;https://github.com/Collederas/build-bridge&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I don’t know whether it currently packs enough features to appeal to a lot of developers out there, but if you are a fellow indie developer and happen to struggle with your release process — give it a try!&lt;/p&gt;
+&lt;p&gt;I will base future support on my personal needs, but I’d be very happy to tailor it to other people’s use cases if anyone will have proposals.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>How Not to Solve a Problem</title>
+    <link href="https://collederas.com/blog/how-not-to-solve-problems/" />
+    <updated>2025-03-24T00:00:00Z</updated>
+    <id>https://collederas.com/blog/how-not-to-solve-problems/</id>
+    <content type="html">&lt;h2 id=&quot;the-debugging-spiral-of-despair&quot; tabindex=&quot;-1&quot;&gt;The Debugging Spiral of Despair &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#the-debugging-spiral-of-despair&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Picture this: You&#39;re debugging a complex piece of code that’s been trouble for hours. Your screen is filled with half-attempted fixes, each more desperate than the last. You&#39;ve stopped thinking and started clicking—trying random solutions, hoping something will magically work. Sound familiar?&lt;/p&gt;
+&lt;h2 id=&quot;a-personal-wake-up-call&quot; tabindex=&quot;-1&quot;&gt;A Personal Wake-Up Call &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#a-personal-wake-up-call&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;In a &lt;a href=&quot;https://collederas.com/blog/unreal-debug&quot;&gt;recent post&lt;/a&gt;, I explained how to debug a packaged Unreal build to investigate a peculiar crash — one with an opaque stack trace that gave little away. Before that, I was deleting areas of my map piece by piece, trying to isolate what I thought was a corrupted asset. Delete, package, test. Fail. Repeat. Mindlessly. All because I didn’t know better and didn’t want to figure out a smarter approach. Hours later, with a mess of half-deleted maps and no progress, it hit me: I was brute-forcing it.&lt;/p&gt;
+&lt;h2 id=&quot;the-psychological-trap-of-unproductive-problem-solving&quot; tabindex=&quot;-1&quot;&gt;The Psychological Trap of Unproductive Problem-Solving &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#the-psychological-trap-of-unproductive-problem-solving&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;I fall into this more often than I’d like to admit. When faced with a tough problem, it feels productive to keep at it relentlessly — like I’m working hard. But I’m just spinning my wheels. I’d guess I’m not alone. It’s tempting to avoid &amp;quot;wasting time&amp;quot; thinking and instead click away stubbornly, even when it’s getting me nowhere.&lt;/p&gt;
+&lt;h2 id=&quot;a-better-approach%3A-thinking-with-purpose&quot; tabindex=&quot;-1&quot;&gt;A Better Approach: Thinking with Purpose &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#a-better-approach%3A-thinking-with-purpose&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The solution is to step back and think with purpose. Rubber ducking, anyone? At any point, you should be able to describe your problem and how your next step aims to fix it: What’s the issue? What’ve I tried? Why didn’t it work? What’s my plan now? In my case, I realized I needed more information. So I learned to breakpoint engine code in a packaged game crash. As the post shows, that led me to an old project setting I fixed in seconds.&lt;/p&gt;
+&lt;h2 id=&quot;the-power-of-stepping-back&quot; tabindex=&quot;-1&quot;&gt;The Power of Stepping Back &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/how-not-to-solve-problems/#the-power-of-stepping-back&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Time is our most valuable resource—for clients, for ourselves, for our sanity. Once I stopped flailing and started thinking, I not only fixed a very nasty bug but also spared myself many more hours of frustration. A deliberate pause can outpace endless grinding.&lt;/p&gt;
+&lt;p&gt;I don’t know how common this is, but I’m willing to bet I’m not alone. Save yourself. Take a breath. Think. Act with purpose. Your time’s worth it.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>How to Debug an Unreal Engine Packaged Build</title>
+    <link href="https://collederas.com/blog/unreal-debug/" />
+    <updated>2025-03-23T00:00:00Z</updated>
+    <id>https://collederas.com/blog/unreal-debug/</id>
+    <content type="html">&lt;h1 id=&quot;context&quot; tabindex=&quot;-1&quot;&gt;Context &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-debug/#context&quot;&gt;#&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;Recently I had to deal with a very nasty error happening on a packaged build of my upcoming game (The Last Toast - working title).&lt;/p&gt;
+&lt;p&gt;The game would exit without a useful error message, and looking at the logs, I could not find anything helpful—just a vague stack trace hinting at the issue being inside the Render Thread. Sure, but where? Why? What is the issue exactly?&lt;/p&gt;
+&lt;p&gt;I figured this could be a problem for someone else as well, so here is a small guide on how to deal with such a problem.&lt;/p&gt;
+&lt;p&gt;The goal is to be able to enter a breakpoint at the exact C++ line that is failing.&lt;/p&gt;
+&lt;h2 id=&quot;how-to-debug-an-engine-crash-on-a-packaged-build-in-unreal&quot; tabindex=&quot;-1&quot;&gt;How to debug an Engine crash on a packaged build in Unreal &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-debug/#how-to-debug-an-engine-crash-on-a-packaged-build-in-unreal&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;I want to emphasize that this guide is intended to debug an issue that comes from Engine code. If your game is crashing on game code, you likely won&#39;t need to check things down at the engine level.&lt;/p&gt;
+&lt;p&gt;In order to breakpoint engine code on a running build, there are fundamentally two options:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Use debug symbols.&lt;/li&gt;
+&lt;li&gt;Use a version of the engine compiled from source.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The first option is definitely easier but may not include symbols for your specific issue. I think it&#39;s still worth trying it first before resorting to building the whole engine.&lt;/p&gt;
+&lt;p&gt;To enable the debug symbols, you simply need to go into the Epic Games Launcher and enable the following option (little arrow next to &amp;quot;Launch&amp;quot; -&amp;gt; Options).&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/5hu6O1gXi9-966.avif 966w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/5hu6O1gXi9-966.webp 966w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-debug/5hu6O1gXi9-966.png&quot; alt=&quot;Enable debug symbols.&quot; width=&quot;966&quot; height=&quot;744&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Then you need to ensure you are packaging the game using the &amp;quot;Debug&amp;quot; configuration. Why Debug? Because this builds both engine and game code without optimizations; code is not altered, and memory layout is not changed.&lt;/p&gt;
+&lt;p&gt;You can select the build configuration from inside the editor from the Package menu.&lt;/p&gt;
+&lt;p&gt;I recommend checking out the &lt;a href=&quot;https://dev.epicgames.com/documentation/en-us/unreal-engine/build-configurations-reference-for-unreal-engine&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;documentation about this&lt;/a&gt; on the official website and/or watching &lt;a href=&quot;https://dev.epicgames.com/community/learning/tutorials/dXl5/advanced-debugging-in-unreal-engine#intro&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;this video&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;According to the docs, the output build folder should include the .pdb files if built with any configuration that is not Shipping. However, in my case, the file was not generated until I enabled the relevant option in project settings by going to: Project Settings → Project → Packaging → Project → Include Debug Files in Shipping Builds. Really not sure why that is.&lt;/p&gt;
+&lt;p&gt;You can easily check if your setup included the symbols file by going into your built game directory → &lt;em&gt;Project Name&lt;/em&gt; → Win64 → Binaries and checking that you have the aforementioned .pdb file next to the executable.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/-evV_0W8Dk-1957.avif 1957w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/-evV_0W8Dk-1957.webp 1957w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-debug/-evV_0W8Dk-1957.png&quot; alt=&quot;Include Symbols in Shipping, maybe needed.&quot; width=&quot;1957&quot; height=&quot;504&quot;&gt;&lt;/picture&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/QPSC7XYf5W-1312.avif 1312w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/QPSC7XYf5W-1312.webp 1312w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-debug/QPSC7XYf5W-1312.png&quot; alt=&quot;.pdb file.&quot; width=&quot;1312&quot; height=&quot;625&quot;&gt;&lt;/picture&gt;
+&lt;div class=&quot;callout note&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Windows, Mac, Linux&lt;/div&gt;&lt;p&gt;I am not sure what the folder structure and debug symbols are on Linux and macOS. Guess it&#39;s not going to be that different anyway.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Once you have this step set up, you are ready for the actual debugging. Launch Visual Studio and open a new solution. But instead of looking for a .sln file, you can now navigate to the &lt;em&gt;.exe&lt;/em&gt; inside the Binaries folder (not the one at the root!) and start it as you would for a regular configuration.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/EX61WKk48I-1075.avif 1075w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/EX61WKk48I-1075.webp 1075w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-debug/EX61WKk48I-1075.png&quot; alt=&quot;In VS, open your executable as a solution.&quot; width=&quot;1075&quot; height=&quot;751&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Your game should launch. Now just trigger the crash and, lo and behold, you should see Visual Studio taking over with an automatic exception breakpoint right where the issue was triggered. You might even be able to inspect memory at that point.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/4s74eGegYT-1240.avif 1240w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-debug/4s74eGegYT-1240.webp 1240w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-debug/4s74eGegYT-1240.png&quot; alt=&quot;Exception caught!&quot; width=&quot;1240&quot; height=&quot;463&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;In my case, I could see that the issue was related to the Cheat Manager loading some unreferenced CVar (I had set up some test CVar in the Project Setting some time ago and then totally forgot about it). I removed that, and all was fine.&lt;/p&gt;
+&lt;p&gt;I doubt I would have ever figured this out without going through this debugging process. I hope this helps some other folks out there!&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Enjoying Gothic 1 in 2025 on a Steam Deck</title>
+    <link href="https://collederas.com/blog/gothic-steamdeck/" />
+    <updated>2025-03-17T00:00:00Z</updated>
+    <id>https://collederas.com/blog/gothic-steamdeck/</id>
+    <content type="html">&lt;p&gt;I recently had a kid, and this meant my regular work schedule got completely flipped around. As this happened, in between nappy changing, feeding, and caring for my girlfriend&#39;s recovery, I found little pockets of time—about 2–3 hours—emerging from my new schedule.&lt;/p&gt;
+&lt;p&gt;That&#39;s when the Steam Deck, gifted by a dear friend and almost forgotten on a living room shelf, caught my eye.&lt;/p&gt;
+&lt;p&gt;But what game to play? For some obscure reason, a perverse idea crept into my mind: I really wanted to revisit an old title that I never had the pleasure of playing—Gothic 1. I played the second and third games but never the original.&lt;/p&gt;
+&lt;p&gt;The problem is, Gothic came out in 2001—way before the Steam Deck was a thing and, heck, way before console gaming was as mainstream as it is today. And Gothic was a PC-only kind of deal. No controller. Just keyboard.&lt;/p&gt;
+&lt;p&gt;&amp;quot;Will I be able to make it work?&amp;quot; I thought. Turns out: yes. And better than I&#39;d hoped for. So I decided to share how.&lt;/p&gt;
+&lt;h2 id=&quot;how-to-run-gothic-1-on-a-steam-deck-with-full-gamepad-support&quot; tabindex=&quot;-1&quot;&gt;How to run Gothic 1 on a Steam Deck with full Gamepad Support &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#how-to-run-gothic-1-on-a-steam-deck-with-full-gamepad-support&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;So, you want to enjoy this great classic while chilling on the couch? Great. This is entirely possible, and I think you&#39;ll be pleased with the results. But it will take a little bit of effort, so get ready to get your hands dirty—figuratively. We’ve got to dig deep into the Deck&#39;s OS.&lt;/p&gt;
+&lt;div class=&quot;callout note&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Note&lt;/div&gt;&lt;p&gt;90% of &lt;strong&gt;the&lt;/strong&gt; information available here comes from various places on The Internet. I just collected all relevant bits here and gave them some structure, so praise to the original authors. Notably &lt;a href=&quot;https://www.reddit.com/r/SteamDeck/comments/uxtomx/comment/ia92wm7/&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;this reddit comment&lt;/a&gt; and &lt;a href=&quot;https://steamcommunity.com/workshop/filedetails/discussion/2791606767/592891465952152936/&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;this steam workshop discussion&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id=&quot;setup-the-workshop&quot; tabindex=&quot;-1&quot;&gt;Setup the Workshop &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#setup-the-workshop&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;In Steam, set Gothic&#39;s beta version to &amp;quot;workshop.&amp;quot; To do this, navigate to the game settings (gear icon), select Properties, scroll down to Beta, and enable the workshop.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/FVGst0ZgJ4-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/FVGst0ZgJ4-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/FVGst0ZgJ4-1280.jpeg&quot; alt=&quot;Steam Deck Beta screen where you can enable the workshop.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
+&lt;h2 id=&quot;enable-mods&quot; tabindex=&quot;-1&quot;&gt;Enable Mods &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#enable-mods&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Visit Gothic 1 workshop and subscribe to the following mods:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2787491081&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Union - patch for Gothic 1&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2793930041&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;zGamePad - complete gamepad support&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2786936496&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Ninja&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2789245548&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Gothic 1 Community Patch&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2791606767&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;DirectX 11 Renderer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2813524957&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Mss32.dll - Union Linux sound fix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;callout warning&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Mod loading order matters!&lt;/div&gt;&lt;p&gt;The order in which these mods are loaded matters. You can let steam detect the ideal order using the option in the dropdown or order them yourself. You can see below the intended order.&lt;/p&gt;
+&lt;/div&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/AC5NhUt6Pi-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/AC5NhUt6Pi-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/AC5NhUt6Pi-1280.jpeg&quot; alt=&quot;Recommended mod list.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
+&lt;h2 id=&quot;setup-the-emulator&quot; tabindex=&quot;-1&quot;&gt;Setup The Emulator &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#setup-the-emulator&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Since this is an old Windows game, it requires emulation. Steam comes preloaded with some Proton versions, but to load all the mods above, we need a custom version called ProtonUp-Qt.&lt;/p&gt;
+&lt;p&gt;To install this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Switch to Desktop Mode. Press the STEAM button, go to Power, and select Switch to Desktop.&lt;/li&gt;
+&lt;li&gt;Open the Terminal from the launcher (System → Terminal).&lt;/li&gt;
+&lt;li&gt;Run the following commands:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;$ flatpak &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; net.davidotek.pupgui2
+$ flatpak &lt;span class=&quot;token function&quot;&gt;install&lt;/span&gt; com.github.Matoking.protontricks&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;
+&lt;p&gt;Open the ProtonUp-Qt desktop app and install the latest Proton-GE version 8. (Version 9 is the latest at the time of writing, but it has issues where the game crashes on launch. If a newer version is available, it may be worth trying it.)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Before exiting Desktop Mode, open Dolphin (File Manager) and navigate to:&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;~/.steam/steam/steamapps/common/Gothic/system&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here, delete &lt;em&gt;SteamPack.ini&lt;/em&gt; to allow the Union mod to generate its own replacement.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Switch back to Gaming Mode and enable the downloaded Proton-GE version from the list (likely at the bottom).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/ELlz_KIeEn-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/ELlz_KIeEn-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/ELlz_KIeEn-1280.jpeg&quot; alt=&quot;Compatibility with Proton GE.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Launch the game. You should see the Gothic Mod Launcher screen.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/iJ4Nx4e9B9-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/iJ4Nx4e9B9-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/iJ4Nx4e9B9-1280.jpeg&quot; alt=&quot;Gothic mod launcher.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;If you got this far—congratulations! But now, quit the game. We are not done yet; this step was just to allow the game to generate some required Proton directories.&lt;/p&gt;
+&lt;h2 id=&quot;directx11-and-music-fixes&quot; tabindex=&quot;-1&quot;&gt;DirectX11 and Music Fixes &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#directx11-and-music-fixes&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;If you play the game now, you’ll likely have no music and no DirectX 11 support. Let’s fix that.&lt;/p&gt;
+&lt;p&gt;Switch back to Desktop Mode and launch the Terminal again:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;$ flatpak run com.github.Matoking.protontricks &lt;span class=&quot;token number&quot;&gt;65540&lt;/span&gt; directmusic&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;One more thing to allow this mod to work:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Open the file&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;~/.steam/steam/steamapps/compatdata/65540/pfx/user.reg&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Find the section&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;[Software&#92;&#92;Wine&#92;&#92;DllOverrides]&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add this line&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;&quot;ddraw&quot;=&quot;native,builtin&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;(This enables the DirectX 11 renderer.)&lt;/em&gt;&lt;/p&gt;
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;
+&lt;p&gt;Delete&lt;/p&gt;
+&lt;pre class=&quot;language-text&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;&quot;*dsound&quot;=&quot;native&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;(This fixes some minor sound delay and crackling)&lt;/em&gt;&lt;/p&gt;
+&lt;ol start=&quot;5&quot;&gt;
+&lt;li&gt;Save and close&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;fix-gd3d11-crash&quot; tabindex=&quot;-1&quot;&gt;Fix GD3D11 crash &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#fix-gd3d11-crash&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;At this point, the game should run fine. However, if you encounter a GD3D11 crash on launch, there’s a fix.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Launch the game and when presented with the mod screen, select GD3D11 and click on &amp;quot;Mod Files&amp;quot; at the top (you need to use the touch screen). This will open up a Windows-like filesystem browser. Note down the Location at the top (it is a big number).&lt;/li&gt;
+&lt;li&gt;Switch to Desktop Mode and open Firefox.&lt;/li&gt;
+&lt;li&gt;Go to the GD3D11 GitHub page.&lt;/li&gt;
+&lt;li&gt;Download the 17.8-dev9 version. (You can switch tags from the dropdown at the top, next to the &amp;quot;Branches and Tags&amp;quot; indicator.)&lt;/li&gt;
+&lt;li&gt;Navigate to the GD3D11 System folder you noted down earlier and delete all its content (not the System folder itself, just its content).&lt;/li&gt;
+&lt;li&gt;Extract the files you downloaded from GitHub inside the now empty Systems folder.&lt;/li&gt;
+&lt;li&gt;Switch back to Game Mode and launch the game.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;Thanks to Finalzero for commenting and pointing out an issue with this procedure. In an earlier version I was wrongly suggesting to unzip the github files directly in the Gothic system folder.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;gamepad-support&quot; tabindex=&quot;-1&quot;&gt;Gamepad support &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#gamepad-support&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;You’ll probably need to get used to Gothic’s old-school interaction system. &lt;a href=&quot;https://www.youtube.com/watch?v=n_vIs-kavqI&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Here&lt;/a&gt; is an explanatory video about it.&lt;br&gt;
+However, you can improve the experience by activating a community controller layout. Navigate to:&lt;/p&gt;
+&lt;p&gt;Controller Settings (next to Settings on the game page)→ Community Layouts.&lt;/p&gt;
+&lt;p&gt;Experiment with different layouts to find the one that works best for you.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/ES-NvrRiSx-1280.avif 1280w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/gothic-steamdeck/ES-NvrRiSx-1280.webp 1280w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/gothic-steamdeck/ES-NvrRiSx-1280.jpeg&quot; alt=&quot;Community controller layouts.&quot; width=&quot;1280&quot; height=&quot;800&quot;&gt;&lt;/picture&gt;
+&lt;h2 id=&quot;enjoy!&quot; tabindex=&quot;-1&quot;&gt;Enjoy! &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/gothic-steamdeck/#enjoy!&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;That’s it! You can now play this old classic, fully restored and with modern rendering features, on your Steam Deck. Happy gaming!&lt;/p&gt;
+</content>
+  </entry>
+</feed>
