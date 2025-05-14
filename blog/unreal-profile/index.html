@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Profiling a case of object leak with Unreal Insights</title>
+        <title>Profiling a case of object leak in Unreal</title>
         <meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
         <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
@@ -517,7 +517,7 @@ header {
         <main id="skip">
             <heading-anchors>
                 
-<h1 id="profiling-a-case-of-object-leak-with-unreal-insights">Profiling a case of object leak with Unreal Insights</h1>
+<h1 id="profiling-a-case-of-object-leak-in-unreal">Profiling a case of object leak in Unreal</h1>
 
 <ul class="post-metadata">
 	<li><time datetime="2025-05-14">14 May 2025</time></li>
@@ -527,10 +527,8 @@ header {
 	<li><a href="/tags/indie/" class="post-tag">indie</a></li>
 </ul>
 
-<div class="callout warning"><div class="callout-title">Profiling Matters!</div><p>Unreal Insights helped me identify a UObject leak tied to an explosion event. The root cause was an overly complex Bomb Field actor not being cleaned up. Adding a 2-second lifetime destroy fixed the issue.</p>
-</div>
 <p>I have recently opened up my upcoming game (<a href="https://store.steampowered.com/app/3639210/One_Last_Toast/" target="_blank" rel="noopener noreferrer">&quot;One Last Toast&quot;</a>) for a closed beta test among friends.</p>
-<p>Among a plethora of other bugs they reported, one stood out more ominously than the rest:</p>
+<p>Among a plethora of other bugs they reported, one stood more ominous than the rest:</p>
 <picture><source type="image/avif" srcset="/blog/unreal-profile/p9bPe3oSI0-993.avif 993w"><source type="image/webp" srcset="/blog/unreal-profile/p9bPe3oSI0-993.webp 993w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/p9bPe3oSI0-993.jpeg" alt="Stop spawning stuff!" width="993" height="206"></picture>
 <p>The reports had this happen midway through a playthrough.</p>
 <p>At a quick glance the issue is clear: too many UObjects (Unreal's own object base class) are being spawned in the game, they are piling up and, when they reach a safeguard limit, the engine shuts down to prevent the leak from eating up more resources.</p>
@@ -538,45 +536,44 @@ header {
 <p>Now, who is the culprit?</p>
 <p>That is the harder question. Profiling tools to the rescue!</p>
 <h2 id="profiling-for-object-leaks" tabindex="-1">Profiling for object leaks <a class="direct-link" href="#profiling-for-object-leaks">#</a></h2>
-<p>The first thing I did was start UnrealInsights.exe with relevant arguments to display memory and UObject-related data (<code>memory,object</code>).</p>
-<p>I targeted the same build my friends were playtesting and... I started playing the game. In order to focus on the specific problem at hand I used the handy LLM tags to display only UObject allocation and deallocation events.</p>
-<p>After about 6 minutes of playing, I started seeing a clear and steady increase in the allocation count:</p>
-<picture><source type="image/avif" srcset="/blog/unreal-profile/LcWltFEzjx-3486.avif 3486w"><source type="image/webp" srcset="/blog/unreal-profile/LcWltFEzjx-3486.webp 3486w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/LcWltFEzjx-3486.png" alt="That's no good" width="3486" height="934"></picture>
+<p>The first thing I did was starting UnrealInsights.exe with relevant arguments to display memory and uobject-related data (<code>memory,object</code>).</p>
+<p>I targeted the same build my friends were playtesting and... I started playing the game. In order to focus on the specific problem at hand I used the handy LLM tags to display only UObject allocations and deallocations events.</p>
+<p>After about 6 minutes of playing, I started seeing some clear and steady increase in the allocation count:</p>
+<img src="content/blog/unreal-profile/the_issue.jpg" alt="That's no good">
 <p>You can see in the graph that the number of allocated objects keeps increasing and the Garbage Collector just can't keep up the pace.</p>
-<p>That is a good start. The next challenge is trying to figure out what could be causing the issue. I didn't immediately realize that something suspicious was going on, but luckily the profiler has this concept of &quot;Bookmarks,&quot; which are labels given to specific events. Some of them are automatically assigned, like in the case of a Level Sequence playing or the Garbage Collector cleaning up some stale objects.</p>
-<picture><source type="image/avif" srcset="/blog/unreal-profile/EDV_7Z7iFF-886.avif 886w"><source type="image/webp" srcset="/blog/unreal-profile/EDV_7Z7iFF-886.webp 886w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/EDV_7Z7iFF-886.png" alt="Find your bearings" width="886" height="88"></picture>
-<p>This helped me notice that the issue started appearing soon after the LS_Ruby sequencer played. LS_Ruby is the little cinematic playing when the player inserts the Ruby Key in the related panel as a means to progress in the game's mansion.</p>
+<p>That is a good start. The next challenge is trying to figure out what could be causing the issue. I didn't immediately realised that something suspicious was going on but luckily the profiler has this concept of &quot;Bookmarks&quot; which are label given to specific events. Some of them are automatically assiged, like in the case of a Level Sequence playing or the Garbage Collector cleaning up some stale objects.</p>
+<img src="content/blog/unreal-profile/bookmarks.jpg" alt="Find your bearings">
+<p>This helped me noticing that the issue started appearing soon after the LS_Ruby sequencer played. LS_Ruby is the little cinematic playing when the player inserts the Ruby Key in the related panel as a mean to progress in the game's mansion.</p>
 <p>That gave me a significant hint as to where the problem was starting from.</p>
 <p>With this in mind, I decided to narrow down my guess even further. I fired up the editor with the same trace profile:</p>
-<pre><code>start &quot;&quot; &quot;C:\Program Files\Epic Games\UE_5.X\Engine\Binaries\Win64\UnrealEditor.exe&quot; OneLastToast.uproject -trace=default,memory,object,loadtime -statnamedevents
-</code></pre>
+<pre class="language-start" tabindex="0"><code class="language-start"></code></pre>
 <p>and positioned myself straight in front of the Ruby Door.<br>
 What happened after entering is the following:</p>
 <picture><source type="image/webp" srcset="/blog/unreal-profile/yWb86JDVMI-540.webp 540w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/yWb86JDVMI-540.gif" alt="Something's afoot with this explosion" width="540" height="304"></picture>
-<p>Look at the LLM UObject allocation graph at the bottom: sure enough, something is going on with this explosion. I left the insights running and confirmed that this was not a temporary thing: the graph kept going up steadily after this event.</p>
+<p>Look at the LLM UObject allocation graph at the bottom: sure enough something is going on with this explosion. I left the insights running and confirmed that this was not a temporary thing: the graph kept going up steadily after this event.</p>
 <p>I started looking for spawning logic related to the explosion and:</p>
 <picture><source type="image/avif" srcset="/blog/unreal-profile/_BLymqlX1U-1369.avif 1369w"><source type="image/webp" srcset="/blog/unreal-profile/_BLymqlX1U-1369.webp 1369w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/_BLymqlX1U-1369.png" alt="The culprit" width="1369" height="814"></picture>
 <p>A likely culprit appeared.</p>
-<p>FS Bomb Field is an actor that I subclassed directly from an Engine example, which is in charge of applying all the physics effects related to the explosion.</p>
-<p>On its own, the spawning logic I have in my Blueprint is not enough to justify a memory leak, but this behemoth of a Bomb Field actor is doing so much, and somewhere in the logic managing the collision of the field with other actors, it is causing wild object spawning.</p>
-<p>I am actually not sure where and why this happens. The Bomb Field logic is quite... intense...</p>
-<img src="content/blog/unreal-profile/bombfield-bp.png" alt="Bombfield madness">
-<p>And this is not even all the graph. I tried to look for spawning-inducing logic in this madness but could not really find it.</p>
+<p>FS Bomb Field is an actor that i subclassed directly from an Engine example which is in charge of applying all the physics effects related to the explosion.</p>
+<p>On its own the spawning logic I have in my Blueprint is not enough to justify a memory leak but this behemot of a Bomb Field actor is doing so much and somewhere, in the logic managing the collision of the field with other actors, it is causing wild object spawning.</p>
+<p>I am actually not sure where and why this happens. The Bombfield logic is quite... intense...</p>
+<picture><source type="image/avif" srcset="/blog/unreal-profile/-z-c6s6Ycs-3511.avif 3511w"><source type="image/webp" srcset="/blog/unreal-profile/-z-c6s6Ycs-3511.webp 3511w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/-z-c6s6Ycs-3511.png" alt="Bombfield madness" width="3511" height="970"></picture>
+<p>And this is not even all the graph. I tried to look for spawning inducing logic in this madness but could not really find it.</p>
 <p>What I do know is:</p>
 <ul>
 <li>There is a clear memory leak</li>
-<li>The leak starts to happen right after the enemy explodes (I tried the same enemy exploding on an empty map and the same pattern appeared)</li>
-<li>The Bomb Field is a big Blueprint with lots of collision spheres and logic</li>
+<li>The leak start to happen right after the enemy explodes (I tried the same enemy exploding on an empty map and the same pattern appeared)</li>
+<li>The bombfield is a big Blueprint with lots of collision spheres and logic</li>
 </ul>
-<p>This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside all its logic and its cumbersome footprint, would help. I did set a lifetime for it here:</p>
-<img src="content/blog/unreal-profile/fix-field.png" alt="Destroy the field after 2 seconds!">
+<p>This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside all its logic ad its cumbersome footprint, would help. I did set a lifetime for it here:</p>
+<picture><source type="image/avif" srcset="/blog/unreal-profile/yZr1gFTaIV-944.avif 944w"><source type="image/webp" srcset="/blog/unreal-profile/yZr1gFTaIV-944.webp 944w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/yZr1gFTaIV-944.png" alt="Destroy the field after 2 seconds!" width="944" height="291"></picture>
 <p>So that after 2 seconds (enough for the explosion forces to push nearby bodies away) the actor is destroyed and look at that:</p>
 <picture><source type="image/webp" srcset="/blog/unreal-profile/xpe8YcBZnh-540.webp 540w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/xpe8YcBZnh-540.gif" alt="No more leaks upon explosion" width="540" height="304"></picture>
 <p>No more sudden increase of UObject allocation after the explosion! I let the thing run for a while just to be sure but all seems good now.</p>
 <p>Will this fix the original crash definitively? I hope! But I can't really guarantee that there aren't other possible causes yet.</p>
 <p>But for sure this was a very nasty leak that is now patched for good.</p>
-<p>I'll be sure to update the post should I gain more insights on why the Bomb Field is causing uncontrolled UObject spawning and if this fix was enough to guarantee a crash-free experience for the testers.</p>
-<p>For now, I am quite happy with what I managed to do on my first proper use of Unreal Insights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs in their games!</p>
+<p>I'll be sure to update the post should I gain more insights on why the bomb field is causing uncontrolled UObject spawning and if this fix was enough to guarantee a crash free experience for the testers.</p>
+<p>For now, I am quite happy with what I managed to do on my first proper use of Unreal Isights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs in</p>
 
 <ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/build-bridge/">I released a semi-automation tool for Unreal</a></li>
 </ul>
@@ -610,7 +607,7 @@ What happened after entering is the following:</p>
                 </em>
             </p>
         </footer>
-        <!-- This page `/blog/unreal-profile/` was built on 2025-05-14T22:22:19.035Z -->
+        <!-- This page `/blog/unreal-profile/` was built on 2025-05-14T22:29:06.326Z -->
         <script type="module" src="/dist/xbxy_EL6cU.js"></script>
         <!-- Google tag (gtag.js) -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
