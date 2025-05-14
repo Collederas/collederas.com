@@ -27,10 +27,10 @@
 &lt;p&gt;The first thing I did was starting UnrealInsights.exe with relevant arguments to display memory and uobject-related data (&lt;code&gt;memory,object&lt;/code&gt;).&lt;/p&gt;
 &lt;p&gt;I targeted the same build my friends were playtesting and... I started playing the game. In order to focus on the specific problem at hand I used the handy LLM tags to display only UObject allocations and deallocations events.&lt;/p&gt;
 &lt;p&gt;After about 6 minutes of playing, I started seeing some clear and steady increase in the allocation count:&lt;/p&gt;
-&lt;img src=&quot;https://collederas.com/blog/unreal-profile/content/blog/unreal-profile/the_issue.jpg&quot; alt=&quot;That&#39;s no good&quot;&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/LcWltFEzjx-3486.avif 3486w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/LcWltFEzjx-3486.webp 3486w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/LcWltFEzjx-3486.png&quot; alt=&quot;That&#39;s no good&quot; width=&quot;3486&quot; height=&quot;934&quot;&gt;&lt;/picture&gt;
 &lt;p&gt;You can see in the graph that the number of allocated objects keeps increasing and the Garbage Collector just can&#39;t keep up the pace.&lt;/p&gt;
 &lt;p&gt;That is a good start. The next challenge is trying to figure out what could be causing the issue. I didn&#39;t immediately realised that something suspicious was going on but luckily the profiler has this concept of &amp;quot;Bookmarks&amp;quot; which are label given to specific events. Some of them are automatically assiged, like in the case of a Level Sequence playing or the Garbage Collector cleaning up some stale objects.&lt;/p&gt;
-&lt;img src=&quot;https://collederas.com/blog/unreal-profile/content/blog/unreal-profile/bookmarks.jpg&quot; alt=&quot;Find your bearings&quot;&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/EDV_7Z7iFF-886.avif 886w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/EDV_7Z7iFF-886.webp 886w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/EDV_7Z7iFF-886.png&quot; alt=&quot;Find your bearings&quot; width=&quot;886&quot; height=&quot;88&quot;&gt;&lt;/picture&gt;
 &lt;p&gt;This helped me noticing that the issue started appearing soon after the LS_Ruby sequencer played. LS_Ruby is the little cinematic playing when the player inserts the Ruby Key in the related panel as a mean to progress in the game&#39;s mansion.&lt;/p&gt;
 &lt;p&gt;That gave me a significant hint as to where the problem was starting from.&lt;/p&gt;
 &lt;p&gt;With this in mind, I decided to narrow down my guess even further. I fired up the editor with the same trace profile:&lt;/p&gt;
@@ -61,7 +61,7 @@ What happened after entering is the following:&lt;/p&gt;
 &lt;p&gt;Will this fix the original crash definitively? I hope! But I can&#39;t really guarantee that there aren&#39;t other possible causes yet.&lt;/p&gt;
 &lt;p&gt;But for sure this was a very nasty leak that is now patched for good.&lt;/p&gt;
 &lt;p&gt;I&#39;ll be sure to update the post should I gain more insights on why the bomb field is causing uncontrolled UObject spawning and if this fix was enough to guarantee a crash free experience for the testers.&lt;/p&gt;
-&lt;p&gt;For now, I am quite happy with what I managed to do on my first proper use of Unreal Isights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs in&lt;/p&gt;
+&lt;p&gt;For now, I am quite happy with what I managed to do on my first proper use of Unreal Isights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs.&lt;/p&gt;
 </content>
   </entry>
   <entry>
