@@ -34,7 +34,7 @@
 &lt;p&gt;This helped me noticing that the issue started appearing soon after the LS_Ruby sequencer played. LS_Ruby is the little cinematic playing when the player inserts the Ruby Key in the related panel as a mean to progress in the game&#39;s mansion.&lt;/p&gt;
 &lt;p&gt;That gave me a significant hint as to where the problem was starting from.&lt;/p&gt;
 &lt;p&gt;With this in mind, I decided to narrow down my guess even further. I fired up the editor with the same trace profile:&lt;/p&gt;
-&lt;pre class=&quot;language-start&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-start&quot;&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;start &lt;span class=&quot;token string&quot;&gt;&quot;&quot;&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;C:&#92;Program Files&lt;span class=&quot;token entity&quot; title=&quot;&#92;E&quot;&gt;&#92;E&lt;/span&gt;pic Games&#92;UE_5.X&lt;span class=&quot;token entity&quot; title=&quot;&#92;E&quot;&gt;&#92;E&lt;/span&gt;ngine&#92;Binaries&#92;Win64&#92;UnrealEditor.exe&quot;&lt;/span&gt; OneLastToast.uproject &lt;span class=&quot;token parameter variable&quot;&gt;-trace&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;default,memory,object,loadtime &lt;span class=&quot;token parameter variable&quot;&gt;-statnamedevents&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;and positioned myself straight in front of the Ruby Door.&lt;br&gt;
 What happened after entering is the following:&lt;/p&gt;
 &lt;picture&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/yWb86JDVMI-540.webp 540w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/yWb86JDVMI-540.gif&quot; alt=&quot;Something&#39;s afoot with this explosion&quot; width=&quot;540&quot; height=&quot;304&quot;&gt;&lt;/picture&gt;
@@ -53,13 +53,13 @@ What happened after entering is the following:&lt;/p&gt;
 &lt;li&gt;The leak start to happen right after the enemy explodes (I tried the same enemy exploding on an empty map and the same pattern appeared)&lt;/li&gt;
 &lt;li&gt;The bombfield is a big Blueprint with lots of collision spheres and logic&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside all its logic ad its cumbersome footprint, would help. I did set a lifetime for it here:&lt;/p&gt;
+&lt;p&gt;This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside its cumbersome footprint, would help. I did set a lifetime for it here:&lt;/p&gt;
 &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/yZr1gFTaIV-944.avif 944w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/yZr1gFTaIV-944.webp 944w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/yZr1gFTaIV-944.png&quot; alt=&quot;Destroy the field after 2 seconds!&quot; width=&quot;944&quot; height=&quot;291&quot;&gt;&lt;/picture&gt;
 &lt;p&gt;So that after 2 seconds (enough for the explosion forces to push nearby bodies away) the actor is destroyed and look at that:&lt;/p&gt;
 &lt;picture&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-profile/xpe8YcBZnh-540.webp 540w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-profile/xpe8YcBZnh-540.gif&quot; alt=&quot;No more leaks upon explosion&quot; width=&quot;540&quot; height=&quot;304&quot;&gt;&lt;/picture&gt;
 &lt;p&gt;No more sudden increase of UObject allocation after the explosion! I let the thing run for a while just to be sure but all seems good now.&lt;/p&gt;
 &lt;p&gt;Will this fix the original crash definitively? I hope! But I can&#39;t really guarantee that there aren&#39;t other possible causes yet.&lt;/p&gt;
-&lt;p&gt;But for sure this was a very nasty leak that is now patched for good.&lt;/p&gt;
+&lt;p&gt;For sure this was a very nasty leak that is now patched for good.&lt;/p&gt;
 &lt;p&gt;I&#39;ll be sure to update the post should I gain more insights on why the bomb field is causing uncontrolled UObject spawning and if this fix was enough to guarantee a crash free experience for the testers.&lt;/p&gt;
 &lt;p&gt;For now, I am quite happy with what I managed to do on my first proper use of Unreal Isights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs.&lt;/p&gt;
 </content>

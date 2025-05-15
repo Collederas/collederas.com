@@ -546,7 +546,7 @@ header {
 <p>This helped me noticing that the issue started appearing soon after the LS_Ruby sequencer played. LS_Ruby is the little cinematic playing when the player inserts the Ruby Key in the related panel as a mean to progress in the game's mansion.</p>
 <p>That gave me a significant hint as to where the problem was starting from.</p>
 <p>With this in mind, I decided to narrow down my guess even further. I fired up the editor with the same trace profile:</p>
-<pre class="language-start" tabindex="0"><code class="language-start"></code></pre>
+<pre class="language-bash" tabindex="0"><code class="language-bash">start <span class="token string">""</span> <span class="token string">"C:\Program Files<span class="token entity" title="\E">\E</span>pic Games\UE_5.X<span class="token entity" title="\E">\E</span>ngine\Binaries\Win64\UnrealEditor.exe"</span> OneLastToast.uproject <span class="token parameter variable">-trace</span><span class="token operator">=</span>default,memory,object,loadtime <span class="token parameter variable">-statnamedevents</span></code></pre>
 <p>and positioned myself straight in front of the Ruby Door.<br>
 What happened after entering is the following:</p>
 <picture><source type="image/webp" srcset="/blog/unreal-profile/yWb86JDVMI-540.webp 540w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/yWb86JDVMI-540.gif" alt="Something's afoot with this explosion" width="540" height="304"></picture>
@@ -565,13 +565,13 @@ What happened after entering is the following:</p>
 <li>The leak start to happen right after the enemy explodes (I tried the same enemy exploding on an empty map and the same pattern appeared)</li>
 <li>The bombfield is a big Blueprint with lots of collision spheres and logic</li>
 </ul>
-<p>This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside all its logic ad its cumbersome footprint, would help. I did set a lifetime for it here:</p>
+<p>This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside its cumbersome footprint, would help. I did set a lifetime for it here:</p>
 <picture><source type="image/avif" srcset="/blog/unreal-profile/yZr1gFTaIV-944.avif 944w"><source type="image/webp" srcset="/blog/unreal-profile/yZr1gFTaIV-944.webp 944w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/yZr1gFTaIV-944.png" alt="Destroy the field after 2 seconds!" width="944" height="291"></picture>
 <p>So that after 2 seconds (enough for the explosion forces to push nearby bodies away) the actor is destroyed and look at that:</p>
 <picture><source type="image/webp" srcset="/blog/unreal-profile/xpe8YcBZnh-540.webp 540w"><img loading="lazy" decoding="async" src="/blog/unreal-profile/xpe8YcBZnh-540.gif" alt="No more leaks upon explosion" width="540" height="304"></picture>
 <p>No more sudden increase of UObject allocation after the explosion! I let the thing run for a while just to be sure but all seems good now.</p>
 <p>Will this fix the original crash definitively? I hope! But I can't really guarantee that there aren't other possible causes yet.</p>
-<p>But for sure this was a very nasty leak that is now patched for good.</p>
+<p>For sure this was a very nasty leak that is now patched for good.</p>
 <p>I'll be sure to update the post should I gain more insights on why the bomb field is causing uncontrolled UObject spawning and if this fix was enough to guarantee a crash free experience for the testers.</p>
 <p>For now, I am quite happy with what I managed to do on my first proper use of Unreal Isights and hope this little adventure could be helpful for anyone dealing with apparently hard-to-pinpoint bugs.</p>
 
@@ -607,7 +607,7 @@ What happened after entering is the following:</p>
                 </em>
             </p>
         </footer>
-        <!-- This page `/blog/unreal-profile/` was built on 2025-05-14T22:46:20.621Z -->
+        <!-- This page `/blog/unreal-profile/` was built on 2025-05-15T07:51:21.825Z -->
         <script type="module" src="/dist/xbxy_EL6cU.js"></script>
         <!-- Google tag (gtag.js) -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
