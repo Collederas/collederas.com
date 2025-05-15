@@ -42,7 +42,8 @@ That gave me a significant hint as to where the problem was starting from.
 
 With this in mind, I decided to narrow down my guess even further. I fired up the editor with the same trace profile:
 
-```start "" "C:\Program Files\Epic Games\UE_5.X\Engine\Binaries\Win64\UnrealEditor.exe" OneLastToast.uproject -trace=default,memory,object,loadtime -statnamedevents
+```bash
+start "" "C:\Program Files\Epic Games\UE_5.X\Engine\Binaries\Win64\UnrealEditor.exe" OneLastToast.uproject -trace=default,memory,object,loadtime -statnamedevents
 ```
 
 and positioned myself straight in front of the Ruby Door.
@@ -74,7 +75,7 @@ What I do know is:
 - The leak start to happen right after the enemy explodes (I tried the same enemy exploding on an empty map and the same pattern appeared)
 - The bombfield is a big Blueprint with lots of collision spheres and logic
 
-This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside all its logic ad its cumbersome footprint, would help. I did set a lifetime for it here:
+This was enough to prompt me to ensure the field is cleaned up after the explosion to see if removing it from the world, alongside its cumbersome footprint, would help. I did set a lifetime for it here:
 
 <img src="./fix_field.png" alt="Destroy the field after 2 seconds!">
 
@@ -86,7 +87,7 @@ No more sudden increase of UObject allocation after the explosion! I let the thi
 
 Will this fix the original crash definitively? I hope! But I can't really guarantee that there aren't other possible causes yet. 
 
-But for sure this was a very nasty leak that is now patched for good.
+For sure this was a very nasty leak that is now patched for good.
 
 I'll be sure to update the post should I gain more insights on why the bomb field is causing uncontrolled UObject spawning and if this fix was enough to guarantee a crash free experience for the testers.
 
