@@ -25,7 +25,7 @@ export default async function (eleventyConfig) {
 			"./public/": "/"
 		})
 		.addPassthroughCopy("content/blog/**/*.{jpg,jpeg,png,gif,svg,webp}")
-		.addPassthroughCopy("content/olt/**.{jpg,jpeg,png,gif,svg,webp}")
+		.addPassthroughCopy("content/olt/*.{jpg,jpeg,png,gif,svg,webp}")
 		.addPassthroughCopy("content/feed/pretty-atom-feed.xsl")
 		.addPassthroughCopy("icons/*")
 		.addPassthroughCopy({ 'content/robots.txt': '/robots.txt' });
