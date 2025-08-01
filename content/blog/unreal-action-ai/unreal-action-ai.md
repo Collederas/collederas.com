@@ -159,10 +159,6 @@ Notice 2 things:
 
 I am using another event here to inform the tree that the target is lost and a transition is required.
 
-The whole tree looks like this:
-
-<img src="./ste.png" alt="The AI tree">
-
 The key here is in how to setup transitions. In particular we want to be sure that from any state we can go to Chase the moment the Agent catches sight of the target. That is why we put this transition on Root:
 
 <img src="./root-chase.png" alt="Transition to chase the moment a target is acquired">
@@ -174,15 +170,13 @@ From Chase, we go to investigate if the *Evaluator* tells us that we lost track 
 <img src="./chase-transitions.png" alt="Chase transitions">
 <img src="./chase-transitions-detail.png" alt="Chase transitions detail">
 
-
-From Patrol we similarly move to root when Agent cannot find a valid patrol location, else we stay in that state (until a target is acquired that is):
-
-<img src="./patrol-transitions.png" alt="Patrol transitions">
-
-Lastly, from investigate we always go to root, whether we can investigate the last heard location or not (always have a failsafe transition if Agent cannot perform certain actions).
+From investigate we always go to root, whether we can investigate the last heard location or not (always have a failsafe transition if Agent cannot perform certain actions).
 
 <img src="./investigate-transitions.png" alt="Investigate transitions">
 
+Lastly, from Patrol we similarly move to root when Agent cannot find a valid patrol location, or we transition to Investigate if a sound is heard.
+
+<img src="./patrol-transitions.png" alt="Patrol transitions">
 
 And really, that's it.
 
