@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Stop fighting Unreal AI Perception System</title>
+        <meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+        <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="icons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="icons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Dr. Collederas">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap">
+        <style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* Defaults */
+:root {
+	--font-family: 'Merriweather', serif;
+	--font-family-monospace: 'Courier Prime', monospace;
+}
+
+:root {
+    --color-gray-20: #e0e0e0;
+    --color-gray-50: #C0C0C0;
+    --color-gray-90: #333333;
+    --background-color: #fff;
+    --text-color: #222222;
+	--text-color-warning: #fd9a83ec;
+    --text-color-link: #1e88e5;
+    --text-color-link-active: #1565c0;
+    --text-color-link-visited: #3b8ad9;
+    --syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #222222;
+        --text-color: #e0e0e0;
+        --text-color-link: #66ccff;
+        --text-color-link-active: #0099cc;
+        --text-color-link-visited: #66b2ff;
+        --color-gray-20: #3c3c3c;
+        --color-gray-50: #666666;
+        --color-gray-90: #888888;
+    }
+}
+
+
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	overflow-y: scroll;
+}
+body {
+	max-width: 40em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+/* Fluid images via https://www.zachleat.com/web/fluid-images/ */
+img{
+  max-width: 100%;
+}
+img[width][height] {
+  height: auto;
+}
+img[src$=".svg"] {
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+video,
+iframe {
+	width: 100%;
+	height: auto;
+}
+iframe {
+	aspect-ratio: 16/9;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+.links-nextprev > * {
+	flex-grow: 1;
+}
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1em;
+}
+.home-link {
+	flex-grow: 1;
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	gap: .5em 1em;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+.callout {
+	margin: 1.75rem 0;
+	padding: 1.25rem;
+	border-left: 0.35rem solid var(--text-color-link);
+	background-color: var(--color-gray-20);
+	border-radius: 0.25rem;
+	font-family: var(--font-family);
+	line-height: 1.6;
+  }
+  
+  .callout-title {
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+  }
+  
+  .callout.note {
+	border-color: var(--text-color-link);
+  }
+
+  .callout.warning {
+	border-color: var(--text-color-warning);
+  }</style>
+    </head>
+        <body><a href="#skip" class="visually-hidden">Skip to main content</a>
+        <header>
+            <a href="/" class="home-link">Dr. Collederas</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Archive</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header>
+        <main id="skip">
+            <heading-anchors>
+                
+<h1 id="stop-fighting-unreal-ai-perception-system">Stop fighting Unreal AI Perception System</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2025-08-01">01 August 2025</time></li>
+	<li><a href="/tags/gamedev/" class="post-tag">gamedev</a>, </li>
+	<li><a href="/tags/software/" class="post-tag">software</a>, </li>
+	<li><a href="/tags/profiling/" class="post-tag">profiling</a>, </li>
+	<li><a href="/tags/indie/" class="post-tag">indie</a></li>
+</ul>
+
+<p>Building a working AI in Unreal should be easy, especially when all you want is something to patrol, investigate noises, and chase players. But if you’ve used Unreal's AI Perception system, you already know: it’s not as intuitive as it looks.</p>
+<p>In this post, I’ll walk through how I got a simple, reliable state-based AI working using State Trees, and how to avoid the common traps with AI Perception that ate days of my time.</p>
+<p>Individually, each of these states is easy enough to set up. The problem is switching between them at the right time in a way that is functional to the gameplay.</p>
+<p>I believe partly it’s due to the <strong>Unreal AI Perception system</strong> being a bit cryptic and counterintuitive. And partly, because I didn’t fully understand the tools and was trying to create transitions the wrong way.</p>
+<p>Eventually, I figured out a decent way to go about it. Let me share a few ideas here.</p>
+<h2 id="what-i-want-to-build" tabindex="-1">What I Want to Build <a class="direct-link" href="#what-i-want-to-build">#</a></h2>
+<p>As said, at its core, I want an agent that can switch between 3 states:</p>
+<ul>
+<li><strong>Default</strong>: when the agent has no task. this can be used for example to patrol but also staying idle.</li>
+<li><strong>Investigate</strong>: move to last heard location.</li>
+<li><strong>Chase</strong>: follow player and/or attack.</li>
+</ul>
+<p>The general idea is summed up in this graph:</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/v7xsKzBU6c-2031.avif 2031w"><source type="image/webp" srcset="/blog/unreal-action-ai/v7xsKzBU6c-2031.webp 2031w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/v7xsKzBU6c-2031.png" alt="The system I want to build" width="2031" height="1224"></picture>
+<p>It is basically composed of 2 parts:</p>
+<ul>
+<li>the state machine handling the transitions</li>
+<li>a task (which I called <em>UPDATE TASK</em> in the picture above), running alongside it, responsible to update all the variables that are required for the state machine transitions.</li>
+</ul>
+<p>Let’s break it down.</p>
+<h2 id="transition-rules" tabindex="-1">Transition Rules <a class="direct-link" href="#transition-rules">#</a></h2>
+<p>Looking at the transitions we have:</p>
+<p>Default     → Investigate  | Heard a sound<br>
+Investigate → Chase        | Target acquired<br>
+Chase       → Investigate  | Lost sight of target for X seconds<br>
+Investigate → Default      | Target not reacquired</p>
+<p>All of them are based on <strong>Perception</strong> updates: either hearing or sight. So that is the main system we'll be dealing with. Unfortunately -and here comes the tricky part- we don't really get events from the Unreal Perception System as we would intuitively want them.</p>
+<h2 id="ai-perception-refresher" tabindex="-1">AI Perception refresher <a class="direct-link" href="#ai-perception-refresher">#</a></h2>
+<p>Since this system is likely one of the biggest hurdles for newcomers trying to build their simple AI, a little refresher is in order.</p>
+<p>The system works by assigning an <em>AI Perception Component</em> to the agent's <em>AI Controller</em> and configuring which senses we want to be active.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/VetUnjn5Jm-946.avif 946w"><source type="image/webp" srcset="/blog/unreal-action-ai/VetUnjn5Jm-946.webp 946w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/VetUnjn5Jm-946.png" alt="Senses config in AI Perception Component" width="946" height="1153"></picture>
+<p>The component offers a delegate that can be bound to receive informations every time a new target is perceived with one of the configured senses.</p>
+<p>It offers a public, blueprint exposed, API with the following functions:</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/O9iiU-eP87-883.avif 883w"><source type="image/webp" srcset="/blog/unreal-action-ai/O9iiU-eP87-883.webp 883w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/O9iiU-eP87-883.png" alt="The public Blueprint API of the system" width="883" height="678"></picture>
+<p>and the following delegates that can be bound to:</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/achbvPXvHt-994.avif 994w"><source type="image/webp" srcset="/blog/unreal-action-ai/achbvPXvHt-994.webp 994w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/achbvPXvHt-994.png" alt="The delegates of the system" width="994" height="654"></picture>
+<p>Now let's think of the logic we are trying to build. For the simple cases where we just need to know whether a target is in sight or a sound has been heard there's no major problems. But let's consider the CHASE-&gt;INVESTIGATE case. We want to be notified when the Agent has lost track of the target -when the sight sense has expired-. How would you go about that?</p>
+<p>You might look at the senses config above and notice that it allows you to configure a <code>Max Age</code>: that is the amount of time a sense is kept into active memory before being discarded. Perfect! We can use this to forget the Sight sense after X seconds!</p>
+<p><strong>Wrong.</strong></p>
+<p>Or better, that is exactly what this setting does. But not as you might intuitively think. Let me elaborate.<br>
+There are -I believe- 2 ways you could think of going about it. And both have gotchas:</p>
+<ol>
+<li>Using the payload of the <code>OnPerceptionInfoUpdated</code> event</li>
+<li>Using the <code>OnTargetPerceptionForgotten</code> event</li>
+</ol>
+<h3 id="why-you-will-use-onperceptioninfoupdated-wrong" tabindex="-1">Why you will use OnPerceptionInfoUpdated wrong <a class="direct-link" href="#why-you-will-use-onperceptioninfoupdated-wrong">#</a></h3>
+<p>This is the event with its payload:<br>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/PeEfRYJvgO-601.avif 601w"><source type="image/webp" srcset="/blog/unreal-action-ai/PeEfRYJvgO-601.webp 601w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/PeEfRYJvgO-601.png" alt="The perception update event" width="601" height="535"></picture></p>
+<p>You might look at it and think: since we get information on both the sense and the <code>Expiration Age</code>, we could check if this value is greater than or equal the <code>Max Age</code> (which you can configure in the <code>AIPerceptionComponent</code> - see pic above) et voilà!</p>
+<p><strong>Wrong. Again</strong></p>
+<p>This is an <em>Update</em> event: it fires at the exact moment a stimulus changes. That means when the target just got into sight, or just exited sight. If the event just happened, it means it had no time to tick its expiration clock yet: <strong>the Expiration Age in PerceptionUpdate events callbacks will always be 0</strong>!</p>
+<p>Ok, but we can maybe use the <code>OnTargetPerceptionForgotten</code> then!</p>
+<h3 id="why-you-will-use-ontargetperceptionforgotten-wrong" tabindex="-1">Why you will use OnTargetPerceptionForgotten wrong <a class="direct-link" href="#why-you-will-use-ontargetperceptionforgotten-wrong">#</a></h3>
+<p>First of all, to use this event you need to explicitly enable it in Project Settings.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/S9ALkuZsSR-1520.avif 1520w"><source type="image/webp" srcset="/blog/unreal-action-ai/S9ALkuZsSR-1520.webp 1520w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/S9ALkuZsSR-1520.png" alt="Receiving PerceptionForgotten events requires checking the related Project Settings checkbox" width="1520" height="306"></picture>
+<p>Once you do this, you can bind to the related event. The problem is that this event is fired only when <strong>all</strong> stimuli for a given Actor are forgotten. That is: if the agent forgets sight, but still has a hearing stimuli for the same actor, the event won't fire because technically the Agent is still aware of the target.</p>
+<p>This is a problem for us: CHASE-&gt;INVESTIGATE requires that we detect when the Sight sense has expired, but not the Hearing one. On the contrary: we would like to fallback to existing hearing information for the same Actor so that we can tell the AI Agent to go investigate the last hearing stimulus.</p>
+<p>So, how do we get around all this?</p>
+<p>I propose a timer.</p>
+<h2 id="handling-sight-stimulus" tabindex="-1">Handling sight stimulus <a class="direct-link" href="#handling-sight-stimulus">#</a></h2>
+<p>We are going to create our own -sight-specific- aging system. It's actually very simple:</p>
+<ol>
+<li>When sight is lost, we start a <strong>timer</strong>.</li>
+<li>If the timer expires without reacquiring the target, we forget them.</li>
+<li>If the target is seen again, we <strong>reset the timer</strong>.</li>
+</ol>
+<p>How do we determine if sight is lost? Well, the info update comes with a <em>Is Successfully Sensed</em> boolean that we can use for this: if <code>True</code> the Agent just acquired line of sight (LOS), if <code>False</code> the LOS has just been lost.</p>
+<p>The rest of the logic is very simple: register a new target when LOS is acquired -if the Agent didn't already have a valid target before- and reset the timer for the known target otherwise.<br>
+And since we need to keep track of the last heard location too, we will override the related variable every time a hearing update comes in.</p>
+<p>Overall it will look like this:</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/-ooISDzxyO-2412.avif 2412w"><source type="image/webp" srcset="/blog/unreal-action-ai/-ooISDzxyO-2412.webp 2412w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/-ooISDzxyO-2412.png" alt="Handling sense updates with custom aging timer for sight" width="2412" height="1358"></picture>
+<h2 id="implementation" tabindex="-1">Implementation <a class="direct-link" href="#implementation">#</a></h2>
+<p>With the quirks of the perception system behind us we can translate this into practice.<br>
+If you want to go with UE's default AI systems you have 2 choices: <strong>Behavior Trees</strong> and <strong>State Trees</strong>.</p>
+<p>I find it easier to model this using State Trees because they are built around the concept of, well, state. They allow you to define authoritative transition logic: when this happens, go to this state.<br>
+You can achieve the same exact thing with Behavior Trees (after all, you can use BTs as State Machines) but that is the path you take if you really want to complicate your life. Because Behavior Trees are reactive it is harder to define when and how a transition should take place.</p>
+<p>So, with State Tree we can use a <strong>State Tree Evaluator</strong> to handle the logic that binds to the <code>AIPerceptionComponent</code> and updates the relevant variables. We need to keep track of:</p>
+<ul>
+<li>The current target</li>
+<li>The last heard location (for the purposes of this example we will only care about the last noise heard)</li>
+</ul>
+<p>The Evaluator will:</p>
+<ul>
+<li>Register for <strong>perception updates</strong></li>
+<li>Track the current <strong>Target</strong> and <strong>LastHeardLocation</strong></li>
+<li>Send <strong>custom events</strong> to trigger state transitions (this is what will cause the tree to switch to a new state)</li>
+<li>Start and resets the <strong>forget timer</strong> for our custom Sight aging system</li>
+</ul>
+<div class="callout info"><div class="callout-title">Sending events to the tree</div><p>You could forego the event sending part and handle the logic inside the State Tree transitions if you wanted to.</p>
+</div>
+<p>This is the whole logic:</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/ZRYLdELVg6-1750.avif 1750w"><source type="image/webp" srcset="/blog/unreal-action-ai/ZRYLdELVg6-1750.webp 1750w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/ZRYLdELVg6-1750.png" alt="All the logic of the evaluator" width="1750" height="1192"></picture>
+<p>With sight updates here:<br>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/Ob0bEjK54S-1720.avif 1720w"><source type="image/webp" srcset="/blog/unreal-action-ai/Ob0bEjK54S-1720.webp 1720w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/Ob0bEjK54S-1720.png" alt="Handling sight stimulus" width="1720" height="756"></picture></p>
+<p>And hearing updates here:<br>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/oyATlBFgn--1510.avif 1510w"><source type="image/webp" srcset="/blog/unreal-action-ai/oyATlBFgn--1510.webp 1510w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/oyATlBFgn--1510.png" alt="Handling hearing stimulus" width="1510" height="535"></picture></p>
+<p>Notice 2 things:</p>
+<ol>
+<li>The timer is stopped the moment the same target (you must check that the stimulus belongs to the same target!):</li>
+</ol>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/CoengIUKcO-1009.avif 1009w"><source type="image/webp" srcset="/blog/unreal-action-ai/CoengIUKcO-1009.webp 1009w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/CoengIUKcO-1009.png" alt="Be careful stopping the timer: do it only if you get a successful sight event for the same actor" width="1009" height="484"></picture>
+<ol start="2">
+<li>The event to clear the target when the timer expires also updates the tree with an event. If you were to use transition logic, you'd have to monitor the <code>Current Target</code> variable on tick in the transition instead.</li>
+</ol>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/W8o-mKBk4I-790.avif 790w"><source type="image/webp" srcset="/blog/unreal-action-ai/W8o-mKBk4I-790.webp 790w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/W8o-mKBk4I-790.png" alt="When timer is up, clear the target and inform the tree" width="790" height="418"></picture>
+<p>I am using another event here to inform the tree that the target is lost and a transition is required.</p>
+<p>The whole tree looks like this:</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/ZRYLdELVg6-1750.avif 1750w"><source type="image/webp" srcset="/blog/unreal-action-ai/ZRYLdELVg6-1750.webp 1750w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/ZRYLdELVg6-1750.png" alt="The AI tree" width="1750" height="1192"></picture>
+<p>The key here is in how to setup transitions. In particular we want to be sure that from any state we can go to Chase the moment the Agent catches sight of the target. That is why we put this transition on Root:</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/OfmOS-ZhAS-1642.avif 1642w"><source type="image/webp" srcset="/blog/unreal-action-ai/OfmOS-ZhAS-1642.webp 1642w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/OfmOS-ZhAS-1642.png" alt="Transition to chase the moment a target is acquired" width="1642" height="555"></picture>
+<p>Then, in order:</p>
+<p>From Chase, we go to investigate if the <em>Evaluator</em> tells us that we lost track of the target for long enough; and we transition to Root otherwise (that is basically when the Agent -for any reason- cannot reach the target).</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/dW0WF40Zev-637.avif 637w"><source type="image/webp" srcset="/blog/unreal-action-ai/dW0WF40Zev-637.webp 637w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/dW0WF40Zev-637.png" alt="Chase transitions" width="637" height="109"></picture>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/sHMUpWx_2f-1633.avif 1633w"><source type="image/webp" srcset="/blog/unreal-action-ai/sHMUpWx_2f-1633.webp 1633w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/sHMUpWx_2f-1633.png" alt="Chase transitions detail" width="1633" height="604"></picture>
+<p>From Patrol we similarly move to root when Agent cannot find a valid patrol location, else we stay in that state (until a target is acquired that is):</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/9O7ByJF0DN-742.avif 742w"><source type="image/webp" srcset="/blog/unreal-action-ai/9O7ByJF0DN-742.webp 742w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/9O7ByJF0DN-742.png" alt="Patrol transitions" width="742" height="177"></picture>
+<p>Lastly, from investigate we always go to root, whether we can investigate the last heard location or not (always have a failsafe transition if Agent cannot perform certain actions).</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/IVDbS-0YNX-877.avif 877w"><source type="image/webp" srcset="/blog/unreal-action-ai/IVDbS-0YNX-877.webp 877w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/IVDbS-0YNX-877.png" alt="Investigate transitions" width="877" height="72"></picture>
+<p>And really, that's it.</p>
+<p>As you see, the whole thing is not hard. It just requires you to know of some quirks with the involved systems.</p>
+<p>Now, this setup won’t cover every edge case, but it gives you a robust foundation for prototyping and iterating on more complex behaviors. And once you understand how Unreal's Perception quirks work under the hood, you'll stop fighting the system and start using it.</p>
+<div class="callout info"><div class="callout-title">Next Steps</div><p>Earlier I mentioned that part of the trickery in setting up reliable AI systems is knowing the tools. In this article I mainly investigated the quirks of the AI Perception tool but how about State Trees? As said, the trick here is to understand how transitions are evaluated and when a task is considered successful or not or simply when it is &quot;completed&quot; (as many transions rely on this).</p>
+<p>I might do another article about this if anyone requests it, but a good way to make sure you understand this is practice really. I'll give you a suggestion on how to train this if you want:<br>
+The setup I explained in the post doesn't take into account the case where the target suddenly -while being chased- moves out of the navmesh (eg. climbs up a ladder).</p>
+<p>How do you update this tree in a way that will take that into account and will resume the chase as soon as the target becomes <em>chaseable</em> again?</p>
+</div>
+<ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/unreal-profile/">Profiling a case of object leak in Unreal</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    
+    var disqus_config = function () {
+     	this.page.url = "https://collederas.com/blog/unreal-action-ai/";
+        this.page.identifier = "unreal-action-ai";
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://skatest1.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </heading-anchors>
+        </main>
+        <footer>
+            <p>
+                <em>Built with
+                    <a href="https://www.11ty.dev/">Eleventy v3.1.2</a>
+                </em>
+            </p>
+        </footer>
+        <!-- This page `/blog/unreal-action-ai/` was built on 2025-08-01T09:22:23.390Z -->
+        <script type="module" src="/dist/xbxy_EL6cU.js"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-M4V1XCD4EB');
+        </script>
+    </body>
+</html>

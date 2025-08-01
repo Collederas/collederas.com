@@ -5,11 +5,143 @@
   <subtitle>Anything I find interesting and useful for others to enjoy.</subtitle>
   <link href="https://collederas.com/feed/feed.xml" rel="self" />
   <link href="https://collederas.com/" />
-  <updated>2025-05-14T00:00:00Z</updated>
+  <updated>2025-08-01T00:00:00Z</updated>
   <id>https://collederas.com/</id>
   <author>
     <name>Fabrizio Scandola - Dr. Collederas</name>
   </author>
+  <entry>
+    <title>Stop fighting Unreal AI Perception System</title>
+    <link href="https://collederas.com/blog/unreal-action-ai/" />
+    <updated>2025-08-01T00:00:00Z</updated>
+    <id>https://collederas.com/blog/unreal-action-ai/</id>
+    <content type="html">&lt;p&gt;Building a working AI in Unreal should be easy, especially when all you want is something to patrol, investigate noises, and chase players. But if you’ve used Unreal&#39;s AI Perception system, you already know: it’s not as intuitive as it looks.&lt;/p&gt;
+&lt;p&gt;In this post, I’ll walk through how I got a simple, reliable state-based AI working using State Trees, and how to avoid the common traps with AI Perception that ate days of my time.&lt;/p&gt;
+&lt;p&gt;Individually, each of these states is easy enough to set up. The problem is switching between them at the right time in a way that is functional to the gameplay.&lt;/p&gt;
+&lt;p&gt;I believe partly it’s due to the &lt;strong&gt;Unreal AI Perception system&lt;/strong&gt; being a bit cryptic and counterintuitive. And partly, because I didn’t fully understand the tools and was trying to create transitions the wrong way.&lt;/p&gt;
+&lt;p&gt;Eventually, I figured out a decent way to go about it. Let me share a few ideas here.&lt;/p&gt;
+&lt;h2 id=&quot;what-i-want-to-build&quot; tabindex=&quot;-1&quot;&gt;What I Want to Build &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-action-ai/#what-i-want-to-build&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;As said, at its core, I want an agent that can switch between 3 states:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Default&lt;/strong&gt;: when the agent has no task. this can be used for example to patrol but also staying idle.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Investigate&lt;/strong&gt;: move to last heard location.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Chase&lt;/strong&gt;: follow player and/or attack.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The general idea is summed up in this graph:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/v7xsKzBU6c-2031.avif 2031w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/v7xsKzBU6c-2031.webp 2031w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/v7xsKzBU6c-2031.png&quot; alt=&quot;The system I want to build&quot; width=&quot;2031&quot; height=&quot;1224&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;It is basically composed of 2 parts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the state machine handling the transitions&lt;/li&gt;
+&lt;li&gt;a task (which I called &lt;em&gt;UPDATE TASK&lt;/em&gt; in the picture above), running alongside it, responsible to update all the variables that are required for the state machine transitions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let’s break it down.&lt;/p&gt;
+&lt;h2 id=&quot;transition-rules&quot; tabindex=&quot;-1&quot;&gt;Transition Rules &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-action-ai/#transition-rules&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Looking at the transitions we have:&lt;/p&gt;
+&lt;p&gt;Default     → Investigate  | Heard a sound&lt;br&gt;
+Investigate → Chase        | Target acquired&lt;br&gt;
+Chase       → Investigate  | Lost sight of target for X seconds&lt;br&gt;
+Investigate → Default      | Target not reacquired&lt;/p&gt;
+&lt;p&gt;All of them are based on &lt;strong&gt;Perception&lt;/strong&gt; updates: either hearing or sight. So that is the main system we&#39;ll be dealing with. Unfortunately -and here comes the tricky part- we don&#39;t really get events from the Unreal Perception System as we would intuitively want them.&lt;/p&gt;
+&lt;h2 id=&quot;ai-perception-refresher&quot; tabindex=&quot;-1&quot;&gt;AI Perception refresher &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-action-ai/#ai-perception-refresher&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Since this system is likely one of the biggest hurdles for newcomers trying to build their simple AI, a little refresher is in order.&lt;/p&gt;
+&lt;p&gt;The system works by assigning an &lt;em&gt;AI Perception Component&lt;/em&gt; to the agent&#39;s &lt;em&gt;AI Controller&lt;/em&gt; and configuring which senses we want to be active.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/VetUnjn5Jm-946.avif 946w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/VetUnjn5Jm-946.webp 946w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/VetUnjn5Jm-946.png&quot; alt=&quot;Senses config in AI Perception Component&quot; width=&quot;946&quot; height=&quot;1153&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;The component offers a delegate that can be bound to receive informations every time a new target is perceived with one of the configured senses.&lt;/p&gt;
+&lt;p&gt;It offers a public, blueprint exposed, API with the following functions:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/O9iiU-eP87-883.avif 883w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/O9iiU-eP87-883.webp 883w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/O9iiU-eP87-883.png&quot; alt=&quot;The public Blueprint API of the system&quot; width=&quot;883&quot; height=&quot;678&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;and the following delegates that can be bound to:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/achbvPXvHt-994.avif 994w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/achbvPXvHt-994.webp 994w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/achbvPXvHt-994.png&quot; alt=&quot;The delegates of the system&quot; width=&quot;994&quot; height=&quot;654&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Now let&#39;s think of the logic we are trying to build. For the simple cases where we just need to know whether a target is in sight or a sound has been heard there&#39;s no major problems. But let&#39;s consider the CHASE-&amp;gt;INVESTIGATE case. We want to be notified when the Agent has lost track of the target -when the sight sense has expired-. How would you go about that?&lt;/p&gt;
+&lt;p&gt;You might look at the senses config above and notice that it allows you to configure a &lt;code&gt;Max Age&lt;/code&gt;: that is the amount of time a sense is kept into active memory before being discarded. Perfect! We can use this to forget the Sight sense after X seconds!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Wrong.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Or better, that is exactly what this setting does. But not as you might intuitively think. Let me elaborate.&lt;br&gt;
+There are -I believe- 2 ways you could think of going about it. And both have gotchas:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Using the payload of the &lt;code&gt;OnPerceptionInfoUpdated&lt;/code&gt; event&lt;/li&gt;
+&lt;li&gt;Using the &lt;code&gt;OnTargetPerceptionForgotten&lt;/code&gt; event&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;why-you-will-use-onperceptioninfoupdated-wrong&quot; tabindex=&quot;-1&quot;&gt;Why you will use OnPerceptionInfoUpdated wrong &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-action-ai/#why-you-will-use-onperceptioninfoupdated-wrong&quot;&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;This is the event with its payload:&lt;br&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/PeEfRYJvgO-601.avif 601w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/PeEfRYJvgO-601.webp 601w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/PeEfRYJvgO-601.png&quot; alt=&quot;The perception update event&quot; width=&quot;601&quot; height=&quot;535&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;You might look at it and think: since we get information on both the sense and the &lt;code&gt;Expiration Age&lt;/code&gt;, we could check if this value is greater than or equal the &lt;code&gt;Max Age&lt;/code&gt; (which you can configure in the &lt;code&gt;AIPerceptionComponent&lt;/code&gt; - see pic above) et voilà!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Wrong. Again&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This is an &lt;em&gt;Update&lt;/em&gt; event: it fires at the exact moment a stimulus changes. That means when the target just got into sight, or just exited sight. If the event just happened, it means it had no time to tick its expiration clock yet: &lt;strong&gt;the Expiration Age in PerceptionUpdate events callbacks will always be 0&lt;/strong&gt;!&lt;/p&gt;
+&lt;p&gt;Ok, but we can maybe use the &lt;code&gt;OnTargetPerceptionForgotten&lt;/code&gt; then!&lt;/p&gt;
+&lt;h3 id=&quot;why-you-will-use-ontargetperceptionforgotten-wrong&quot; tabindex=&quot;-1&quot;&gt;Why you will use OnTargetPerceptionForgotten wrong &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-action-ai/#why-you-will-use-ontargetperceptionforgotten-wrong&quot;&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;First of all, to use this event you need to explicitly enable it in Project Settings.&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/S9ALkuZsSR-1520.avif 1520w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/S9ALkuZsSR-1520.webp 1520w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/S9ALkuZsSR-1520.png&quot; alt=&quot;Receiving PerceptionForgotten events requires checking the related Project Settings checkbox&quot; width=&quot;1520&quot; height=&quot;306&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Once you do this, you can bind to the related event. The problem is that this event is fired only when &lt;strong&gt;all&lt;/strong&gt; stimuli for a given Actor are forgotten. That is: if the agent forgets sight, but still has a hearing stimuli for the same actor, the event won&#39;t fire because technically the Agent is still aware of the target.&lt;/p&gt;
+&lt;p&gt;This is a problem for us: CHASE-&amp;gt;INVESTIGATE requires that we detect when the Sight sense has expired, but not the Hearing one. On the contrary: we would like to fallback to existing hearing information for the same Actor so that we can tell the AI Agent to go investigate the last hearing stimulus.&lt;/p&gt;
+&lt;p&gt;So, how do we get around all this?&lt;/p&gt;
+&lt;p&gt;I propose a timer.&lt;/p&gt;
+&lt;h2 id=&quot;handling-sight-stimulus&quot; tabindex=&quot;-1&quot;&gt;Handling sight stimulus &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-action-ai/#handling-sight-stimulus&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;We are going to create our own -sight-specific- aging system. It&#39;s actually very simple:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;When sight is lost, we start a &lt;strong&gt;timer&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;If the timer expires without reacquiring the target, we forget them.&lt;/li&gt;
+&lt;li&gt;If the target is seen again, we &lt;strong&gt;reset the timer&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;How do we determine if sight is lost? Well, the info update comes with a &lt;em&gt;Is Successfully Sensed&lt;/em&gt; boolean that we can use for this: if &lt;code&gt;True&lt;/code&gt; the Agent just acquired line of sight (LOS), if &lt;code&gt;False&lt;/code&gt; the LOS has just been lost.&lt;/p&gt;
+&lt;p&gt;The rest of the logic is very simple: register a new target when LOS is acquired -if the Agent didn&#39;t already have a valid target before- and reset the timer for the known target otherwise.&lt;br&gt;
+And since we need to keep track of the last heard location too, we will override the related variable every time a hearing update comes in.&lt;/p&gt;
+&lt;p&gt;Overall it will look like this:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/-ooISDzxyO-2412.avif 2412w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/-ooISDzxyO-2412.webp 2412w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/-ooISDzxyO-2412.png&quot; alt=&quot;Handling sense updates with custom aging timer for sight&quot; width=&quot;2412&quot; height=&quot;1358&quot;&gt;&lt;/picture&gt;
+&lt;h2 id=&quot;implementation&quot; tabindex=&quot;-1&quot;&gt;Implementation &lt;a class=&quot;direct-link&quot; href=&quot;https://collederas.com/blog/unreal-action-ai/#implementation&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;With the quirks of the perception system behind us we can translate this into practice.&lt;br&gt;
+If you want to go with UE&#39;s default AI systems you have 2 choices: &lt;strong&gt;Behavior Trees&lt;/strong&gt; and &lt;strong&gt;State Trees&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;I find it easier to model this using State Trees because they are built around the concept of, well, state. They allow you to define authoritative transition logic: when this happens, go to this state.&lt;br&gt;
+You can achieve the same exact thing with Behavior Trees (after all, you can use BTs as State Machines) but that is the path you take if you really want to complicate your life. Because Behavior Trees are reactive it is harder to define when and how a transition should take place.&lt;/p&gt;
+&lt;p&gt;So, with State Tree we can use a &lt;strong&gt;State Tree Evaluator&lt;/strong&gt; to handle the logic that binds to the &lt;code&gt;AIPerceptionComponent&lt;/code&gt; and updates the relevant variables. We need to keep track of:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The current target&lt;/li&gt;
+&lt;li&gt;The last heard location (for the purposes of this example we will only care about the last noise heard)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The Evaluator will:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Register for &lt;strong&gt;perception updates&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Track the current &lt;strong&gt;Target&lt;/strong&gt; and &lt;strong&gt;LastHeardLocation&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Send &lt;strong&gt;custom events&lt;/strong&gt; to trigger state transitions (this is what will cause the tree to switch to a new state)&lt;/li&gt;
+&lt;li&gt;Start and resets the &lt;strong&gt;forget timer&lt;/strong&gt; for our custom Sight aging system&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;callout info&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Sending events to the tree&lt;/div&gt;&lt;p&gt;You could forego the event sending part and handle the logic inside the State Tree transitions if you wanted to.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;This is the whole logic:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/ZRYLdELVg6-1750.avif 1750w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/ZRYLdELVg6-1750.webp 1750w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/ZRYLdELVg6-1750.png&quot; alt=&quot;All the logic of the evaluator&quot; width=&quot;1750&quot; height=&quot;1192&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;With sight updates here:&lt;br&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/Ob0bEjK54S-1720.avif 1720w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/Ob0bEjK54S-1720.webp 1720w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/Ob0bEjK54S-1720.png&quot; alt=&quot;Handling sight stimulus&quot; width=&quot;1720&quot; height=&quot;756&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;And hearing updates here:&lt;br&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/oyATlBFgn--1510.avif 1510w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/oyATlBFgn--1510.webp 1510w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/oyATlBFgn--1510.png&quot; alt=&quot;Handling hearing stimulus&quot; width=&quot;1510&quot; height=&quot;535&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Notice 2 things:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The timer is stopped the moment the same target (you must check that the stimulus belongs to the same target!):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/CoengIUKcO-1009.avif 1009w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/CoengIUKcO-1009.webp 1009w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/CoengIUKcO-1009.png&quot; alt=&quot;Be careful stopping the timer: do it only if you get a successful sight event for the same actor&quot; width=&quot;1009&quot; height=&quot;484&quot;&gt;&lt;/picture&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;The event to clear the target when the timer expires also updates the tree with an event. If you were to use transition logic, you&#39;d have to monitor the &lt;code&gt;Current Target&lt;/code&gt; variable on tick in the transition instead.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/W8o-mKBk4I-790.avif 790w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/W8o-mKBk4I-790.webp 790w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/W8o-mKBk4I-790.png&quot; alt=&quot;When timer is up, clear the target and inform the tree&quot; width=&quot;790&quot; height=&quot;418&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;I am using another event here to inform the tree that the target is lost and a transition is required.&lt;/p&gt;
+&lt;p&gt;The whole tree looks like this:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/ZRYLdELVg6-1750.avif 1750w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/ZRYLdELVg6-1750.webp 1750w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/ZRYLdELVg6-1750.png&quot; alt=&quot;The AI tree&quot; width=&quot;1750&quot; height=&quot;1192&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;The key here is in how to setup transitions. In particular we want to be sure that from any state we can go to Chase the moment the Agent catches sight of the target. That is why we put this transition on Root:&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/OfmOS-ZhAS-1642.avif 1642w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/OfmOS-ZhAS-1642.webp 1642w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/OfmOS-ZhAS-1642.png&quot; alt=&quot;Transition to chase the moment a target is acquired&quot; width=&quot;1642&quot; height=&quot;555&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Then, in order:&lt;/p&gt;
+&lt;p&gt;From Chase, we go to investigate if the &lt;em&gt;Evaluator&lt;/em&gt; tells us that we lost track of the target for long enough; and we transition to Root otherwise (that is basically when the Agent -for any reason- cannot reach the target).&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/dW0WF40Zev-637.avif 637w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/dW0WF40Zev-637.webp 637w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/dW0WF40Zev-637.png&quot; alt=&quot;Chase transitions&quot; width=&quot;637&quot; height=&quot;109&quot;&gt;&lt;/picture&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/sHMUpWx_2f-1633.avif 1633w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/sHMUpWx_2f-1633.webp 1633w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/sHMUpWx_2f-1633.png&quot; alt=&quot;Chase transitions detail&quot; width=&quot;1633&quot; height=&quot;604&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;From Patrol we similarly move to root when Agent cannot find a valid patrol location, else we stay in that state (until a target is acquired that is):&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/9O7ByJF0DN-742.avif 742w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/9O7ByJF0DN-742.webp 742w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/9O7ByJF0DN-742.png&quot; alt=&quot;Patrol transitions&quot; width=&quot;742&quot; height=&quot;177&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;Lastly, from investigate we always go to root, whether we can investigate the last heard location or not (always have a failsafe transition if Agent cannot perform certain actions).&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/IVDbS-0YNX-877.avif 877w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-action-ai/IVDbS-0YNX-877.webp 877w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-action-ai/IVDbS-0YNX-877.png&quot; alt=&quot;Investigate transitions&quot; width=&quot;877&quot; height=&quot;72&quot;&gt;&lt;/picture&gt;
+&lt;p&gt;And really, that&#39;s it.&lt;/p&gt;
+&lt;p&gt;As you see, the whole thing is not hard. It just requires you to know of some quirks with the involved systems.&lt;/p&gt;
+&lt;p&gt;Now, this setup won’t cover every edge case, but it gives you a robust foundation for prototyping and iterating on more complex behaviors. And once you understand how Unreal&#39;s Perception quirks work under the hood, you&#39;ll stop fighting the system and start using it.&lt;/p&gt;
+&lt;div class=&quot;callout info&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Next Steps&lt;/div&gt;&lt;p&gt;Earlier I mentioned that part of the trickery in setting up reliable AI systems is knowing the tools. In this article I mainly investigated the quirks of the AI Perception tool but how about State Trees? As said, the trick here is to understand how transitions are evaluated and when a task is considered successful or not or simply when it is &amp;quot;completed&amp;quot; (as many transions rely on this).&lt;/p&gt;
+&lt;p&gt;I might do another article about this if anyone requests it, but a good way to make sure you understand this is practice really. I&#39;ll give you a suggestion on how to train this if you want:&lt;br&gt;
+The setup I explained in the post doesn&#39;t take into account the case where the target suddenly -while being chased- moves out of the navmesh (eg. climbs up a ladder).&lt;/p&gt;
+&lt;p&gt;How do you update this tree in a way that will take that into account and will resume the chase as soon as the target becomes &lt;em&gt;chaseable&lt;/em&gt; again?&lt;/p&gt;
+&lt;/div&gt;</content>
+  </entry>
   <entry>
     <title>Profiling a case of object leak in Unreal</title>
     <link href="https://collederas.com/blog/unreal-profile/" />
