@@ -618,11 +618,11 @@ You can achieve the same exact thing with Behavior Trees (after all, you can use
 <div class="callout info"><div class="callout-title">Sending events to the tree</div><p>You could forego the event sending part and handle the logic inside the State Tree transitions if you wanted to.</p>
 </div>
 <p>This is the whole logic:</p>
-<picture><source type="image/avif" srcset="/blog/unreal-action-ai/ZRYLdELVg6-1750.avif 1750w"><source type="image/webp" srcset="/blog/unreal-action-ai/ZRYLdELVg6-1750.webp 1750w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/ZRYLdELVg6-1750.png" alt="All the logic of the evaluator" width="1750" height="1192"></picture>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/rKj6K--u8s-1873.avif 1873w"><source type="image/webp" srcset="/blog/unreal-action-ai/rKj6K--u8s-1873.webp 1873w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/rKj6K--u8s-1873.png" alt="All the logic of the evaluator" width="1873" height="1047"></picture>
 <p>With sight updates here:<br>
 <picture><source type="image/avif" srcset="/blog/unreal-action-ai/Ob0bEjK54S-1720.avif 1720w"><source type="image/webp" srcset="/blog/unreal-action-ai/Ob0bEjK54S-1720.webp 1720w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/Ob0bEjK54S-1720.png" alt="Handling sight stimulus" width="1720" height="756"></picture></p>
 <p>And hearing updates here:<br>
-<picture><source type="image/avif" srcset="/blog/unreal-action-ai/oyATlBFgn--1510.avif 1510w"><source type="image/webp" srcset="/blog/unreal-action-ai/oyATlBFgn--1510.webp 1510w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/oyATlBFgn--1510.png" alt="Handling hearing stimulus" width="1510" height="535"></picture></p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/ofPIk9JSQv-1920.avif 1920w"><source type="image/webp" srcset="/blog/unreal-action-ai/ofPIk9JSQv-1920.webp 1920w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/ofPIk9JSQv-1920.png" alt="Handling hearing stimulus" width="1920" height="618"></picture></p>
 <p>Notice 2 things:</p>
 <ol>
 <li>The timer is stopped the moment the same target (you must check that the stimulus belongs to the same target!):</li>
@@ -633,18 +633,16 @@ You can achieve the same exact thing with Behavior Trees (after all, you can use
 </ol>
 <picture><source type="image/avif" srcset="/blog/unreal-action-ai/W8o-mKBk4I-790.avif 790w"><source type="image/webp" srcset="/blog/unreal-action-ai/W8o-mKBk4I-790.webp 790w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/W8o-mKBk4I-790.png" alt="When timer is up, clear the target and inform the tree" width="790" height="418"></picture>
 <p>I am using another event here to inform the tree that the target is lost and a transition is required.</p>
-<p>The whole tree looks like this:</p>
-<picture><source type="image/avif" srcset="/blog/unreal-action-ai/ZRYLdELVg6-1750.avif 1750w"><source type="image/webp" srcset="/blog/unreal-action-ai/ZRYLdELVg6-1750.webp 1750w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/ZRYLdELVg6-1750.png" alt="The AI tree" width="1750" height="1192"></picture>
 <p>The key here is in how to setup transitions. In particular we want to be sure that from any state we can go to Chase the moment the Agent catches sight of the target. That is why we put this transition on Root:</p>
 <picture><source type="image/avif" srcset="/blog/unreal-action-ai/OfmOS-ZhAS-1642.avif 1642w"><source type="image/webp" srcset="/blog/unreal-action-ai/OfmOS-ZhAS-1642.webp 1642w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/OfmOS-ZhAS-1642.png" alt="Transition to chase the moment a target is acquired" width="1642" height="555"></picture>
 <p>Then, in order:</p>
 <p>From Chase, we go to investigate if the <em>Evaluator</em> tells us that we lost track of the target for long enough; and we transition to Root otherwise (that is basically when the Agent -for any reason- cannot reach the target).</p>
 <picture><source type="image/avif" srcset="/blog/unreal-action-ai/dW0WF40Zev-637.avif 637w"><source type="image/webp" srcset="/blog/unreal-action-ai/dW0WF40Zev-637.webp 637w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/dW0WF40Zev-637.png" alt="Chase transitions" width="637" height="109"></picture>
 <picture><source type="image/avif" srcset="/blog/unreal-action-ai/sHMUpWx_2f-1633.avif 1633w"><source type="image/webp" srcset="/blog/unreal-action-ai/sHMUpWx_2f-1633.webp 1633w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/sHMUpWx_2f-1633.png" alt="Chase transitions detail" width="1633" height="604"></picture>
-<p>From Patrol we similarly move to root when Agent cannot find a valid patrol location, else we stay in that state (until a target is acquired that is):</p>
-<picture><source type="image/avif" srcset="/blog/unreal-action-ai/9O7ByJF0DN-742.avif 742w"><source type="image/webp" srcset="/blog/unreal-action-ai/9O7ByJF0DN-742.webp 742w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/9O7ByJF0DN-742.png" alt="Patrol transitions" width="742" height="177"></picture>
-<p>Lastly, from investigate we always go to root, whether we can investigate the last heard location or not (always have a failsafe transition if Agent cannot perform certain actions).</p>
+<p>From investigate we always go to root, whether we can investigate the last heard location or not (always have a failsafe transition if Agent cannot perform certain actions).</p>
 <picture><source type="image/avif" srcset="/blog/unreal-action-ai/IVDbS-0YNX-877.avif 877w"><source type="image/webp" srcset="/blog/unreal-action-ai/IVDbS-0YNX-877.webp 877w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/IVDbS-0YNX-877.png" alt="Investigate transitions" width="877" height="72"></picture>
+<p>Lastly, from Patrol we similarly move to root when Agent cannot find a valid patrol location, or we transition to Investigate if a sound is heard.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-action-ai/ewd0xjV_tZ-2830.avif 2830w"><source type="image/webp" srcset="/blog/unreal-action-ai/ewd0xjV_tZ-2830.webp 2830w"><img loading="lazy" decoding="async" src="/blog/unreal-action-ai/ewd0xjV_tZ-2830.png" alt="Patrol transitions" width="2830" height="657"></picture>
 <p>And really, that's it.</p>
 <p>As you see, the whole thing is not hard. It just requires you to know of some quirks with the involved systems.</p>
 <p>Now, this setup won’t cover every edge case, but it gives you a robust foundation for prototyping and iterating on more complex behaviors. And once you understand how Unreal's Perception quirks work under the hood, you'll stop fighting the system and start using it.</p>
@@ -685,7 +683,7 @@ The setup I explained in the post doesn't take into account the case where the t
                 </em>
             </p>
         </footer>
-        <!-- This page `/blog/unreal-action-ai/` was built on 2025-08-01T09:22:23.390Z -->
+        <!-- This page `/blog/unreal-action-ai/` was built on 2025-08-01T09:59:38.721Z -->
         <script type="module" src="/dist/xbxy_EL6cU.js"></script>
         <!-- Google tag (gtag.js) -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
