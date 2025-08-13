@@ -50,7 +50,7 @@ If you modeled your spider in a neutral resting pose, you can store each leg's i
 
 The Home Location must move and rotate with the body, so it is defined in **World Space**.
 
-<img src="./spidey-homeloc-visual.png" alt="Home Locations are in red">
+<img src="./spidey-homeloc-visual.gif" alt="Home Location visualiztion">
 
 The Home Location is visualized in red in this gif.
 
