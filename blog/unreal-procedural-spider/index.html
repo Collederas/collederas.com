@@ -558,9 +558,11 @@ If you modeled your spider in a neutral resting pose, you can store each leg's i
 <p>The Home Location must move and rotate with the body, so it is defined in <strong>World Space</strong>.</p>
 <picture><source type="image/webp" srcset="/blog/unreal-procedural-spider/YUcdSnjzWY-800.webp 800w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/YUcdSnjzWY-800.gif" alt="Home Location visualiztion" width="800" height="450"></picture>
 <p>The Home Location is visualized in red in this gif.</p>
-<div class="callout info"><div class="callout-title">Local Space vs World Space</div><p><strong>Local Space</strong> means positions are relative to the rig origin (skeletal mesh location). No matter where the mesh moves in the world, that point will always be (0,0,0) in Local Space.</p>
+<div class="callout info"><div class="callout-title">Local Space vs World Space</div><p>Understanding the difference is quite important.</p>
+<p><strong>Local Space</strong> means positions are relative to the rig origin (skeletal mesh location). No matter where the mesh moves in the world, that point will always be (0,0,0) in Local Space.</p>
 <p><strong>World Space</strong> means the actual world position in the level.<br>
 We store offsets in Local Space but calculate Home Locations in World Space.</p>
+<p>I encourage you to use the Draw Box debug node to visualize where points appear when a mesh is positioned in the world while switching between World and Local space with the <code>ToWorld</code> and <code>FromWorld</code> nodes.</p>
 </div>
 <p>After showing you how to set this up concretely, we will build on this idea by also adding:</p>
 <ul>
@@ -573,7 +575,7 @@ We store offsets in Local Space but calculate Home Locations in World Space.</p>
 <p>In the Setup function -which runs once at construction time- let's spawn controls to act as the IK effectors.<br>
 This is also the time to store the <strong>Initial Leg Offsets</strong> (Local Space) in one array, and the <strong>Current World Space Locations</strong> of the legs in another. These WS locations are what we will move to control the legs.</p>
 <picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/NN-siX16UD-1938.avif 1938w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/NN-siX16UD-1938.webp 1938w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/NN-siX16UD-1938.png" alt="Setup" width="1938" height="1198"></picture>
-<p>Ignore <em>Tag Tripod</em> and <em>Replant Info</em> variables for now. We will come back to them later.</p>
+<p>Ignore <em>Tag Tripod</em> and <em>Replant Info</em> for now. We will come back to them later.</p>
 <div class="callout warning"><div class="callout-title">Array indexes</div><p>Keep index consistency.<br>
 As you will see we will use a series of arrays to setup this rig. If index <code>i</code> in one array refers to a leg, the same index in any other array must refer to that exact same leg.<br>
 This is actually quite simple to achieve: on setup we construct a few arrays iterating over each leg. As long as we keep using these indexes for any other array we will need, all will be fine.</p>
@@ -590,12 +592,13 @@ This is actually quite simple to achieve: on setup we construct a few arrays ite
 <p>With both the current Leg Worls Space Locations and the Home Location calculated, the step trigger is simple:<br>
 If the distance between the two is greater than a threshold, start a replant.</p>
 <picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/f2SVwnBZAr-1158.avif 1158w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/f2SVwnBZAr-1158.webp 1158w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/f2SVwnBZAr-1158.png" alt="Step condition" width="1158" height="723"></picture>
-<h2 id="arched-step-interpolation" tabindex="-1">Arched Step Interpolation <a class="direct-link" href="#arched-step-interpolation">#</a></h2>
-<p>When a replant is triggered, we do not instantly snap the leg to the Home Location.<br>
-Instead, we interpolate from the current position to the Home Location, adding an arched Z movement for realism.</p>
 <p>I store replant data in a struct array containing the start location and destination (both in World Space). This makes the graph cleaner.<br>
 We first decide which legs need replanting, then run a separate function to handle the interpolation.</p>
 <picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/BB18493jtq-1686.avif 1686w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/BB18493jtq-1686.webp 1686w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/BB18493jtq-1686.png" alt="Replant decided" width="1686" height="810"></picture>
+<h2 id="arched-step-interpolation" tabindex="-1">Arched Step Interpolation <a class="direct-link" href="#arched-step-interpolation">#</a></h2>
+<p>So now we have a struct containing info about the legs that need replanting. In the next step we iterate through them and applying the actual replant logic.</p>
+<p>When a replant is triggered, we do not instantly snap the leg to the Home Location.<br>
+Instead, we interpolate from the current position to the Home Location, adding an arched Z movement for realism.</p>
 <p>During interpolation, X and Y use a standard Interpolate node, while Z uses a curve remapped so that the maximum value is the apex of the arch.</p>
 <picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/qNg6PKrt_A-1237.avif 1237w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/qNg6PKrt_A-1237.webp 1237w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/qNg6PKrt_A-1237.png" alt="Replant arch" width="1237" height="1081"></picture>
 <p>When the distance between the current location and the Home Location is nearly zero, the replant is considered complete.</p>
@@ -614,17 +617,20 @@ We first decide which legs need replanting, then run a separate function to hand
 <li>back left leg</li>
 <li>central right leg</li>
 </ul>
-<p>Only one tripod is allowed to replant at a time. We alternate between them.</p>
-<p>In Setup, assign each leg to a tripod.</p>
+<p>Remember in the Setup function there was a Tag Tripods function? That is where we assign each leg to a tripod.<br>
+A variable called Current Swing Tripod tracks which tripod is currently allowed to replant. When a replant finishes, we will switch to the other tripod.</p>
+<p>So, in Setup, assign each leg to a tripod.</p>
 <picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/JkIN6734My-1824.avif 1824w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/JkIN6734My-1824.webp 1824w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/JkIN6734My-1824.png" alt="Tagging the tripods" width="1824" height="1413"></picture>
 <p>A variable called <em>Current Swing Tripod</em> tracks which tripod is currently allowed to replant.<br>
 When a replant finishes, switch to the other tripod.</p>
 <picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/eRI8GctE-w-1455.avif 1455w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/eRI8GctE-w-1455.webp 1455w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/eRI8GctE-w-1455.png" alt="Switch tripods" width="1455" height="1135"></picture>
+<p>At the end of a step (which for us is when the interpolation of a replant ends), we will switch tripod and remove the leg from the array of legs that needs a replant:</p>
+<img src="content/blog/unreal-procedural-spider/resetstep.png" alt="Reset step">
 <h2 id="applying-ik" tabindex="-1">Applying IK <a class="direct-link" href="#applying-ik">#</a></h2>
 <p>The last step is to setup the IK for the legs.<br>
 This is very simple, the only care is to use the world space target positions we calculated earlier as the Effector Transform for the IK. This way we will effectively use our calculations to determine the end location of each foot.</p>
 <p>If you are using 2 leg bones per leg, a <code>BASIC IK</code> node will work. Otherwise, use <code>FABRIK</code> for a 3+ bone setup.<br>
-Use the <strong>Current World Space Location</strong> array as the Effector Transform for each leg.</p>
+Use the <strong>Current World Space Location</strong> array as the Effector Transform for each leg. Notice that I am actually converting the World Space transforms to local space because that is what the solver expects.</p>
 <picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/AI2cFBT3ny-1852.avif 1852w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/AI2cFBT3ny-1852.webp 1852w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/AI2cFBT3ny-1852.png" alt="Legs IK" width="1852" height="1108"></picture>
 <p>IK should be the final step in the solver. To keep things tidy, run it after all logic using a Sequence node.</p>
 <h2 id="obstacle-detection" tabindex="-1">Obstacle Detection <a class="direct-link" href="#obstacle-detection">#</a></h2>
@@ -667,7 +673,7 @@ If you run into any issue with this you are welcome to let me know in a comment,
                 </em>
             </p>
         </footer>
-        <!-- This page `/blog/unreal-procedural-spider/` was built on 2025-08-13T08:34:25.076Z -->
+        <!-- This page `/blog/unreal-procedural-spider/` was built on 2025-08-13T09:42:23.893Z -->
         <script type="module" src="/dist/xbxy_EL6cU.js"></script>
         <!-- Google tag (gtag.js) -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
