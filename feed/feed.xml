@@ -45,7 +45,7 @@ I went for a simple approach: 3 bones for each leg (2 for the joints and 1 for t
 &lt;p&gt;When a replant happens, the leg moves back to its &lt;strong&gt;Home Location&lt;/strong&gt;. This is the ideal target position that restores the natural offset from the body.&lt;br&gt;
 If you modeled your spider in a neutral resting pose, you can store each leg&#39;s initial offset for this purpose.&lt;/p&gt;
 &lt;p&gt;The Home Location must move and rotate with the body, so it is defined in &lt;strong&gt;World Space&lt;/strong&gt;.&lt;/p&gt;
-&lt;img src=&quot;https://collederas.com/blog/unreal-procedural-spider/content/blog/unreal-procedural-spider/spidey-homeloc-visual.png&quot; alt=&quot;Home Locations are in red&quot;&gt;
+&lt;picture&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://collederas.com/blog/unreal-procedural-spider/YUcdSnjzWY-800.webp 800w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://collederas.com/blog/unreal-procedural-spider/YUcdSnjzWY-800.gif&quot; alt=&quot;Home Location visualiztion&quot; width=&quot;800&quot; height=&quot;450&quot;&gt;&lt;/picture&gt;
 &lt;p&gt;The Home Location is visualized in red in this gif.&lt;/p&gt;
 &lt;div class=&quot;callout info&quot;&gt;&lt;div class=&quot;callout-title&quot;&gt;Local Space vs World Space&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Local Space&lt;/strong&gt; means positions are relative to the rig origin (skeletal mesh location). No matter where the mesh moves in the world, that point will always be (0,0,0) in Local Space.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;World Space&lt;/strong&gt; means the actual world position in the level.&lt;br&gt;
