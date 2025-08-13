@@ -55,10 +55,14 @@ The Home Location must move and rotate with the body, so it is defined in **Worl
 The Home Location is visualized in red in this gif.
 
 {% callout "info", "Local Space vs World Space" %}
+Understanding the difference is quite important. 
+
 **Local Space** means positions are relative to the rig origin (skeletal mesh location). No matter where the mesh moves in the world, that point will always be (0,0,0) in Local Space.  
 
 **World Space** means the actual world position in the level.  
 We store offsets in Local Space but calculate Home Locations in World Space.
+
+I encourage you to use the Draw Box debug node to visualize where points appear when a mesh is positioned in the world while switching between World and Local space with the `ToWorld` and `FromWorld` nodes.
 {% endcallout %}
 
 After showing you how to set this up concretely, we will build on this idea by also adding:
@@ -74,7 +78,7 @@ This is also the time to store the **Initial Leg Offsets** (Local Space) in one 
 
 <img src="./setup.png" alt="Setup">
 
-Ignore *Tag Tripod* and *Replant Info* variables for now. We will come back to them later.
+Ignore *Tag Tripod* and *Replant Info* for now. We will come back to them later.
 
 {% callout "warning", "Array indexes" %}
 Keep index consistency.  
@@ -103,14 +107,16 @@ If the distance between the two is greater than a threshold, start a replant.
 
 <img src="./step-condition.png" alt="Step condition">
 
-## Arched Step Interpolation
-When a replant is triggered, we do not instantly snap the leg to the Home Location.  
-Instead, we interpolate from the current position to the Home Location, adding an arched Z movement for realism.
-
 I store replant data in a struct array containing the start location and destination (both in World Space). This makes the graph cleaner.  
 We first decide which legs need replanting, then run a separate function to handle the interpolation.
 
 <img src="./set-replant.png" alt="Replant decided">
+
+## Arched Step Interpolation
+So now we have a struct containing info about the legs that need replanting. In the next step we iterate through them and applying the actual replant logic.
+
+When a replant is triggered, we do not instantly snap the leg to the Home Location.  
+Instead, we interpolate from the current position to the Home Location, adding an arched Z movement for realism.
 
 During interpolation, X and Y use a standard Interpolate node, while Z uses a curve remapped so that the maximum value is the apex of the arch.
 
@@ -133,9 +139,10 @@ Tripod 2:
 - back left leg
 - central right leg
 
-Only one tripod is allowed to replant at a time. We alternate between them.
+Remember in the Setup function there was a Tag Tripods function? That is where we assign each leg to a tripod. 
+A variable called Current Swing Tripod tracks which tripod is currently allowed to replant. When a replant finishes, we will switch to the other tripod.
 
-In Setup, assign each leg to a tripod.
+So, in Setup, assign each leg to a tripod.
 
 <img src="./tag-tripod.png" alt="Tagging the tripods">
 
@@ -144,12 +151,17 @@ When a replant finishes, switch to the other tripod.
 
 <img src="./switch-tripod.png" alt="Switch tripods">
 
+At the end of a step (which for us is when the interpolation of a replant ends), we will switch tripod and remove the leg from the array of legs that needs a replant:
+
+<img src="./resetstep.png" alt="Reset step">
+
+
 ## Applying IK
 The last step is to setup the IK for the legs.
 This is very simple, the only care is to use the world space target positions we calculated earlier as the Effector Transform for the IK. This way we will effectively use our calculations to determine the end location of each foot.
 
 If you are using 2 leg bones per leg, a `BASIC IK` node will work. Otherwise, use `FABRIK` for a 3+ bone setup.  
-Use the **Current World Space Location** array as the Effector Transform for each leg.
+Use the **Current World Space Location** array as the Effector Transform for each leg. Notice that I am actually converting the World Space transforms to local space because that is what the solver expects.
 
 <img src="./legs-ik.png" alt="Legs IK">
 
