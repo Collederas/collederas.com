@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The basics to create a Procedural Spider in Unreal</title>
+        <meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+        <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="icons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="icons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Dr. Collederas">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap">
+        <style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* Defaults */
+:root {
+	--font-family: 'Merriweather', serif;
+	--font-family-monospace: 'Courier Prime', monospace;
+}
+
+:root {
+    --color-gray-20: #e0e0e0;
+    --color-gray-50: #C0C0C0;
+    --color-gray-90: #333333;
+    --background-color: #fff;
+    --text-color: #222222;
+	--text-color-warning: #fd9a83ec;
+    --text-color-link: #1e88e5;
+    --text-color-link-active: #1565c0;
+    --text-color-link-visited: #3b8ad9;
+    --syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #222222;
+        --text-color: #e0e0e0;
+        --text-color-link: #66ccff;
+        --text-color-link-active: #0099cc;
+        --text-color-link-visited: #66b2ff;
+        --color-gray-20: #3c3c3c;
+        --color-gray-50: #666666;
+        --color-gray-90: #888888;
+    }
+}
+
+
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	overflow-y: scroll;
+}
+body {
+	max-width: 40em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+/* Fluid images via https://www.zachleat.com/web/fluid-images/ */
+img{
+  max-width: 100%;
+}
+img[width][height] {
+  height: auto;
+}
+img[src$=".svg"] {
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+video,
+iframe {
+	width: 100%;
+	height: auto;
+}
+iframe {
+	aspect-ratio: 16/9;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+.links-nextprev > * {
+	flex-grow: 1;
+}
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1em;
+}
+.home-link {
+	flex-grow: 1;
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	gap: .5em 1em;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+.callout {
+	margin: 1.75rem 0;
+	padding: 1.25rem;
+	border-left: 0.35rem solid var(--text-color-link);
+	background-color: var(--color-gray-20);
+	border-radius: 0.25rem;
+	font-family: var(--font-family);
+	line-height: 1.6;
+  }
+  
+  .callout-title {
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+  }
+  
+  .callout.note {
+	border-color: var(--text-color-link);
+  }
+
+  .callout.warning {
+	border-color: var(--text-color-warning);
+  }</style>
+    </head>
+        <body><a href="#skip" class="visually-hidden">Skip to main content</a>
+        <header>
+            <a href="/" class="home-link">Dr. Collederas</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Archive</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header>
+        <main id="skip">
+            <heading-anchors>
+                
+<h1 id="the-basics-to-create-a-procedural-spider-in-unreal">The basics to create a Procedural Spider in Unreal</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2025-08-13">13 August 2025</time></li>
+	<li><a href="/tags/gamedev/" class="post-tag">gamedev</a>, </li>
+	<li><a href="/tags/unreal/" class="post-tag">unreal</a>, </li>
+	<li><a href="/tags/tutorial/" class="post-tag">tutorial</a></li>
+</ul>
+
+<p>I always wanted to create a procedural creature of some sort. During development of One Last Toast I didn't really have the time and budget to do so. But with the game released I gave it a go.<br>
+Here's the results:</p>
+<picture><source type="image/webp" srcset="/blog/unreal-procedural-spider/QFOd5L_hai-800.webp 800w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/QFOd5L_hai-800.gif" alt="Spidey walking around" width="800" height="450"></picture>
+<p>How did I make it? I'll walk you through it so you can reproduce it for yourself.</p>
+<h2 id="the-model" tabindex="-1">The Model <a class="direct-link" href="#the-model">#</a></h2>
+<p>I started by modeling this beauty in Blender.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/6ul_HlKij_-1777.avif 1777w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/6ul_HlKij_-1777.webp 1777w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/6ul_HlKij_-1777.png" alt="Spidey" width="1777" height="1311"></picture>
+<p>I know, I should have gone to art school.<br>
+What matters here is not really the art but the bone orientation.</p>
+<p>You need to ensure that bones have a consistent orientation (for example Z always facing up and Y facing along the bone).<br>
+I went for a simple approach: 3 bones for each leg (2 for the joints and 1 for the foot) and 1 bone for the body/root.</p>
+<p>The feet are not skinned, they are just used as controls for the IK leg system that we will build in Control Rig.</p>
+<picture><source type="image/webp" srcset="/blog/unreal-procedural-spider/nOTAbEXcMl-502.webp 502w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/nOTAbEXcMl-502.gif" alt="Spidey weights" width="502" height="348"></picture>
+<p>When that's ready, we can export and move to Unreal.</p>
+<p>PS: I will occasionally call this monster a &quot;spider&quot; even if it has only 6 legs. Let's all agree to that for simplicity.</p>
+<div class="callout info"><div class="callout-title">Exporting rigged meshes from Blender to Unreal</div><p>By default, importing from Blender to Unreal often causes the armature scaling to be messed up. You end up with bones that are 100 times smaller in Unreal, which makes the whole mesh tiny and causes animation issues.</p>
+<p>Before export in Blender:</p>
+<ul>
+<li>Select armature and mesh</li>
+<li>Scale both by 100</li>
+<li>Apply scale</li>
+<li>Scale mesh by 0.10 and leave it as is</li>
+</ul>
+</div>
+<h2 id="how-a-procedural-walk-works" tabindex="-1">How A Procedural Walk Works <a class="direct-link" href="#how-a-procedural-walk-works">#</a></h2>
+<p>The core idea is to keep the legs fixed in place and only move them when the body has moved far enough to justify a replant.</p>
+<picture><source type="image/webp" srcset="/blog/unreal-procedural-spider/PTGXYeGAYV-800.webp 800w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/PTGXYeGAYV-800.gif" alt="Spidey planted" width="800" height="572"></picture>
+<p>When a replant happens, the leg moves back to its <strong>Home Location</strong>. This is the ideal target position that restores the natural offset from the body.<br>
+If you modeled your spider in a neutral resting pose, you can store each leg's initial offset for this purpose.</p>
+<p>The Home Location must move and rotate with the body, so it is defined in <strong>World Space</strong>.</p>
+<img src="content/blog/unreal-procedural-spider/spidey-homeloc-visual.png" alt="Home Locations are in red">
+<p>The Home Location is visualized in red in this gif.</p>
+<div class="callout info"><div class="callout-title">Local Space vs World Space</div><p><strong>Local Space</strong> means positions are relative to the rig origin (skeletal mesh location). No matter where the mesh moves in the world, that point will always be (0,0,0) in Local Space.</p>
+<p><strong>World Space</strong> means the actual world position in the level.<br>
+We store offsets in Local Space but calculate Home Locations in World Space.</p>
+</div>
+<p>After showing you how to set this up concretely, we will build on this idea by also adding:</p>
+<ul>
+<li>obstacle collision detection for each leg</li>
+<li>a nice arched interpolation when stepping</li>
+<li>a tripod stepping pattern for a natural gait</li>
+</ul>
+<h2 id="setup-in-unreal" tabindex="-1">Setup in Unreal <a class="direct-link" href="#setup-in-unreal">#</a></h2>
+<p>In Unreal, create a <code>Control Rig</code> from the spider mesh.</p>
+<p>In the Setup function -which runs once at construction time- let's spawn controls to act as the IK effectors.<br>
+This is also the time to store the <strong>Initial Leg Offsets</strong> (Local Space) in one array, and the <strong>Current World Space Locations</strong> of the legs in another. These WS locations are what we will move to control the legs.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/NN-siX16UD-1938.avif 1938w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/NN-siX16UD-1938.webp 1938w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/NN-siX16UD-1938.png" alt="Setup" width="1938" height="1198"></picture>
+<p>Ignore <em>Tag Tripod</em> and <em>Replant Info</em> variables for now. We will come back to them later.</p>
+<div class="callout warning"><div class="callout-title">Array indexes</div><p>Keep index consistency.<br>
+As you will see we will use a series of arrays to setup this rig. If index <code>i</code> in one array refers to a leg, the same index in any other array must refer to that exact same leg.<br>
+This is actually quite simple to achieve: on setup we construct a few arrays iterating over each leg. As long as we keep using these indexes for any other array we will need, all will be fine.</p>
+</div>
+<h2 id="calculating-home-locations" tabindex="-1">Calculating Home Locations <a class="direct-link" href="#calculating-home-locations">#</a></h2>
+<p>The intuition is simple: we take the current <strong>Initial Leg Offsets</strong> (which are in Local Space) and add the body locations to them. Basically we are creating an imaginary point for each leg, which is relative to the body location and that we can use as a target for the replant.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/0VeXd4sUTE-1936.avif 1936w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/0VeXd4sUTE-1936.webp 1936w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/0VeXd4sUTE-1936.png" alt="Home Location calculation" width="1936" height="1174"></picture>
+<p>This is done with a <em>Transform * Transform</em> operation between the root and each leg. This operation applies one transform’s rotation and location to another, essentially moving the offset into world space.</p>
+<div class="callout warning"><div class="callout-title">World Location result</div><p>Notice how I do a <em>To World</em> on the root before multiplying the transforms. This way the result will be a World Location. That's important because subsequent calculations will be based on this.</p>
+</div>
+<div class="callout info"><div class="callout-title">Velocity?</div><p>In my version I also account for velocity (which I feed into the rig from the Animation BP) to handle sudden direction changes from AI movement. This is optional and frankly should be done better than just using an arbitrary magnitude of &quot;50&quot;. So please ignore that :)</p>
+</div>
+<h2 id="step-condition-and-replant-trigger" tabindex="-1">Step Condition and Replant Trigger <a class="direct-link" href="#step-condition-and-replant-trigger">#</a></h2>
+<p>With both the current Leg Worls Space Locations and the Home Location calculated, the step trigger is simple:<br>
+If the distance between the two is greater than a threshold, start a replant.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/f2SVwnBZAr-1158.avif 1158w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/f2SVwnBZAr-1158.webp 1158w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/f2SVwnBZAr-1158.png" alt="Step condition" width="1158" height="723"></picture>
+<h2 id="arched-step-interpolation" tabindex="-1">Arched Step Interpolation <a class="direct-link" href="#arched-step-interpolation">#</a></h2>
+<p>When a replant is triggered, we do not instantly snap the leg to the Home Location.<br>
+Instead, we interpolate from the current position to the Home Location, adding an arched Z movement for realism.</p>
+<p>I store replant data in a struct array containing the start location and destination (both in World Space). This makes the graph cleaner.<br>
+We first decide which legs need replanting, then run a separate function to handle the interpolation.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/BB18493jtq-1686.avif 1686w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/BB18493jtq-1686.webp 1686w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/BB18493jtq-1686.png" alt="Replant decided" width="1686" height="810"></picture>
+<p>During interpolation, X and Y use a standard Interpolate node, while Z uses a curve remapped so that the maximum value is the apex of the arch.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/qNg6PKrt_A-1237.avif 1237w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/qNg6PKrt_A-1237.webp 1237w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/qNg6PKrt_A-1237.png" alt="Replant arch" width="1237" height="1081"></picture>
+<p>When the distance between the current location and the Home Location is nearly zero, the replant is considered complete.</p>
+<h2 id="tripod-stepping" tabindex="-1">Tripod Stepping <a class="direct-link" href="#tripod-stepping">#</a></h2>
+<p>At this point, all legs trigger a replant at about the same time if the &quot;spider&quot; is moving in a straight line. This results in a very unnatural motion. Insects (and any other animal with more than a few legs) tend to move in a gaited pattern. It's a <a href="https://hexapodrobots.weebly.com/insect-walking-mechanisms.html" target="_blank" rel="noopener noreferrer">whole world you can get lost into</a> but the gist of it is that legs move in groups to guarantee maximum stability: when one group moves, the other stays planted.</p>
+<p>For a 6 legged creature we will group them into two tripods:</p>
+<p>Tripod 1:</p>
+<ul>
+<li>front right leg</li>
+<li>back right leg</li>
+<li>central left leg</li>
+</ul>
+<p>Tripod 2:</p>
+<ul>
+<li>front left leg</li>
+<li>back left leg</li>
+<li>central right leg</li>
+</ul>
+<p>Only one tripod is allowed to replant at a time. We alternate between them.</p>
+<p>In Setup, assign each leg to a tripod.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/JkIN6734My-1824.avif 1824w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/JkIN6734My-1824.webp 1824w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/JkIN6734My-1824.png" alt="Tagging the tripods" width="1824" height="1413"></picture>
+<p>A variable called <em>Current Swing Tripod</em> tracks which tripod is currently allowed to replant.<br>
+When a replant finishes, switch to the other tripod.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/eRI8GctE-w-1455.avif 1455w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/eRI8GctE-w-1455.webp 1455w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/eRI8GctE-w-1455.png" alt="Switch tripods" width="1455" height="1135"></picture>
+<h2 id="applying-ik" tabindex="-1">Applying IK <a class="direct-link" href="#applying-ik">#</a></h2>
+<p>The last step is to setup the IK for the legs.<br>
+This is very simple, the only care is to use the world space target positions we calculated earlier as the Effector Transform for the IK. This way we will effectively use our calculations to determine the end location of each foot.</p>
+<p>If you are using 2 leg bones per leg, a <code>BASIC IK</code> node will work. Otherwise, use <code>FABRIK</code> for a 3+ bone setup.<br>
+Use the <strong>Current World Space Location</strong> array as the Effector Transform for each leg.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/AI2cFBT3ny-1852.avif 1852w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/AI2cFBT3ny-1852.webp 1852w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/AI2cFBT3ny-1852.png" alt="Legs IK" width="1852" height="1108"></picture>
+<p>IK should be the final step in the solver. To keep things tidy, run it after all logic using a Sequence node.</p>
+<h2 id="obstacle-detection" tabindex="-1">Obstacle Detection <a class="direct-link" href="#obstacle-detection">#</a></h2>
+<p>Finally, to handle uneven terrain, cast a ray straight down from above each leg location. If a hit is found, adjust the vertical position accordingly before IK.</p>
+<picture><source type="image/avif" srcset="/blog/unreal-procedural-spider/Wcse7nNMXT-1918.avif 1918w"><source type="image/webp" srcset="/blog/unreal-procedural-spider/Wcse7nNMXT-1918.webp 1918w"><img loading="lazy" decoding="async" src="/blog/unreal-procedural-spider/Wcse7nNMXT-1918.png" alt="Obstacle detection" width="1918" height="501"></picture>
+<p>You can interpolate this adjustment for smoother results.</p>
+<hr>
+<p>The amount of improvements you can add to this are endless but what we built up to here should already give you a solid base to start off of.<br>
+If you run into any issue with this you are welcome to let me know in a comment, I will try to help out where possible!</p>
+
+<ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/unreal-action-ai/">Stop fighting Unreal AI Perception System</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    
+    var disqus_config = function () {
+     	this.page.url = "https://collederas.com/blog/unreal-procedural-spider/";
+        this.page.identifier = "unreal-procedural-spider";
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://skatest1.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </heading-anchors>
+        </main>
+        <footer>
+            <p>
+                <em>Built with
+                    <a href="https://www.11ty.dev/">Eleventy v3.1.2</a>
+                </em>
+            </p>
+        </footer>
+        <!-- This page `/blog/unreal-procedural-spider/` was built on 2025-08-13T08:27:45.362Z -->
+        <script type="module" src="/dist/xbxy_EL6cU.js"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M4V1XCD4EB"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-M4V1XCD4EB');
+        </script>
+    </body>
+</html>
